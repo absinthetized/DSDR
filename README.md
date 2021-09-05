@@ -4,7 +4,7 @@ this tool is developed in typescript with svelte and sveltstrap on the front end
 
 ## Pre req
 
-* npm with node js
+* npm with node js (v.12.22 is used here)
 * python 3.9 with venv
 
 ## Setup
