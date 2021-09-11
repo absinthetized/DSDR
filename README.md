@@ -42,4 +42,11 @@ This will run the flask devel server which will monitor even for changed static 
 
 ## Preseeding
 
-In the current state the backend is a proto, you need to populate a pseudo DB by running the `role_db_builder.sh` script from the root of the repo. If you skip this step the backend wont run. To run the preseeding script you need to autenticate yourself into the GCP as the script uses the gcloud command 
+In the current state the backend is a proto, you need to populate a pseudo DB by running the `role_db_builder.sh` script from the root of the repo. If you skip this step the backend wont run. To run the preseeding script you need to autenticate yourself into the GCP as the script uses the gcloud command.
+
+```
+mkdir ./server/src/roles
+./role_db_builder.sh
+```
+
+this will take a bit of time depending on your machine and network latency
