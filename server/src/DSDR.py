@@ -15,6 +15,7 @@ def db_parser():
     id = 0
     for role_file in files:
         fd = open(role_dir + sep + role_file)
+        #print(role_file)
         role = json.load(fd)
         role["id"] = id
         id = id +1

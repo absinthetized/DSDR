@@ -35,10 +35,12 @@ This will run the front end compiling the required static files into the server 
 ### start the server
 
 ```
-cd src && ./run-server.sh
+cd server/src && ./run-server.sh
 ```
 
-This will run the flask devel server which will monitor even for changed static files (front end) reloading the serving env after any modification either from front end or from backend
+This will run the flask devel server which will monitor even for changed static files (front end) reloading the serving env after any modification either from front end or from backend.
+
+the server is accessible on localhost:5001
 
 ## Preseeding
 
