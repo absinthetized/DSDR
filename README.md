@@ -38,7 +38,7 @@ This will run the front end compiling the required static files into the server 
 cd src && ./run-server.sh
 ```
 
-This will run the flask devel server which will monitor even for changed static files (front end) reloading the hot reloading serving env after any modification either from front end or from backend
+This will run the flask devel server which will monitor even for changed static files (front end) reloading the serving env after any modification either from front end or from backend
 
 ## Preseeding
 
@@ -49,4 +49,4 @@ mkdir ./server/src/roles
 ./role_db_builder.sh
 ```
 
-this will take a bit of time depending on your machine and network latency
+this will take a bit of time depending on your machine and network latency. still you can interrupt the process and have a devel env even if not all the roles are downloaded from GCP
