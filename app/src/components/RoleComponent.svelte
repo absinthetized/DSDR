@@ -20,6 +20,7 @@
    export let searchedBy: Array<string> = [];
    export let matches: number;
    export let id: number;
+   export let perc_matches: number;
 
    let level: string = "";
 
@@ -101,7 +102,7 @@
          <div class="col-3" style="text-align: right;">
             {#if matches > 0}
                matches <strong>{matches}</strong> of {includedPermissions.length}
-               perms
+               perms (<strong>{perc_matches}%</strong>)
             {/if}
          </div>
       </div>
