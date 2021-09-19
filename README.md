@@ -1,5 +1,6 @@
 ## Intro
 
+A way to search for multiple permissions among different GCP roles. This tool perfomr OR searches to mtch profiles for all the permisisons you request in the search input box. Partial permission names can be used and are matched agains all the available permissions.
 this tool is developed in typescript with svelte and sveltstrap on the front end. The backend is currently a proto quickly written in python 3 with flask
 
 ## Pre req
