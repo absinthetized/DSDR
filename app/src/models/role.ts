@@ -27,6 +27,7 @@ export class Role {
     public readonly id: number;
     public matches: number
     public matchedBy: string[]
+    public perc_match: number
 
     constructor(item: any) {
         // this comes from server side

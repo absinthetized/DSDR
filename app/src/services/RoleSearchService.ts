@@ -37,6 +37,9 @@ export class RoleSearchService {
 
       let tmpSet = new Set(this.filteredRoles)
       this.filteredRoles = Array.from(tmpSet.values())
+
+      // order by matching percentage
+      this.filteredRoles.sort( (first: Role, second: Role) => { return second.perc_match - first.perc_match })
    }
 
    searchSingleTerm(searchTerm: string): Role[] {
@@ -48,14 +51,23 @@ export class RoleSearchService {
          if (role.includedPermissions === undefined)
             return null
 
+         // let see if we match this search term
          let matchingPerms = role.includedPermissions.filter(perm => {
             return term.test(perm) ? true : false
          })
 
+         //add the number of matches for this search term
          role.matches += matchingPerms.length
          if (role.matches > 0)
             role.matchedBy.push(searchTerm)
 
+         // compute percentage of permissions matching against the search term
+         if (role.includedPermissions.length > 0)
+            role.perc_match = role.matches / role.includedPermissions.length * 100
+         else
+            role.perc_match = 0
+
+         // if we match no permission skip this role
          return (matchingPerms.length > 0) ? role : null
       })
 
