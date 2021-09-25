@@ -101,7 +101,7 @@
          </div>
          <div class="col-3" style="text-align: right;">
             {#if matches > 0}
-               matches <strong>{matches}</strong> of {includedPermissions.length}
+               matches <strong>{searchedBy}</strong> term(s) against <strong>{matches}</strong> of {includedPermissions.length}
                perms (<strong>{perc_matches}%</strong>)
             {/if}
          </div>
