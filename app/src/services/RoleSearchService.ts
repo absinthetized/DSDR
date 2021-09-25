@@ -12,44 +12,57 @@ export class RoleSearchService {
    }
 
    handleSearch(searchString: string) {
-      //console.log('search term: ' + this._searchTerm);
+      // init stats
       this.rolesC.roles.forEach(role => role.resetMatches())
 
+      // nothing to do here, just return the whole roles set
       if (searchString === "") {
          this.filteredRoles = [...this.rolesC.roles]
-
          return
       }
 
+      // get serch terms from search bar, each separated by space
       let searchTerms = searchString.split(" ")
 
-      /* accumulate all results */
+      // scan roles for each search term, this manipulates the roles values
+      searchTerms.forEach(term => this.searchSingleTerm(term))
 
-      this.filteredRoles = searchTerms.reduce((accumulator, term): Role[] => {
-         // console.log("accumulator is:")
-         // console.log(accumulator)
-         // console.log("seach term is: " + term)
+      // extract only those roles whose match the search terms
+      this.filteredRoles = this.rolesC.roles.filter( role => {
+         // compute percentage of permissions matching against the search term
+         if (role.includedPermissions.length > 0)
+            role.perc_match += role.matches / role.includedPermissions.length
 
-         return accumulator.concat(this.searchSingleTerm(term))
-      }, [])
+         return (role.perc_match > 0) ? role : null
+      })
 
-      /* purge doubles with a Set */
+      if (this.filteredRoles.length === 0) {
+         alert("No result found!")
+         return
+      }
 
-      let tmpSet = new Set(this.filteredRoles)
-      this.filteredRoles = Array.from(tmpSet.values())
-
-      // order by matching percentage
-      this.filteredRoles.sort( (first: Role, second: Role) => { return second.perc_match - first.perc_match })
+      // order by matching
+      // here is a small trick: 
+      // perc is always 0<=x<=1
+      // matchedBy size is always >=1
+      // by summing up the two I get ordering by number of matches first,
+      // by match percentage after.
+      //
+      // don't be fooled by possibly undefined values:
+      // 3.0 here is aways 2 matches with 100%
+      // as one can't have 3 matches with 0% match
+      this.filteredRoles.sort( (first: Role, second: Role) => { 
+         return (second.perc_match + second.matchedBy.length) - (first.perc_match + first.matchedBy.length)
+      })
    }
 
-   searchSingleTerm(searchTerm: string): Role[] {
+   searchSingleTerm(searchTerm: string) {
       let term = new RegExp(searchTerm)
-      let filteredRoles = []
-
-      filteredRoles = this.rolesC.roles.filter(role => {
+      
+      this.rolesC.roles.forEach(role => {
          //console.log(role)
          if (role.includedPermissions === undefined)
-            return null
+            return
 
          // let see if we match this search term
          let matchingPerms = role.includedPermissions.filter(perm => {
@@ -57,24 +70,10 @@ export class RoleSearchService {
          })
 
          //add the number of matches for this search term
-         role.matches += matchingPerms.length
-         if (role.matches > 0)
+         if (matchingPerms.length > 0) {
+            role.matches += matchingPerms.length
             role.matchedBy.push(searchTerm)
-
-         // compute percentage of permissions matching against the search term
-         if (role.includedPermissions.length > 0)
-            role.perc_match = role.matches / role.includedPermissions.length * 100
-         else
-            role.perc_match = 0
-
-         // if we match no permission skip this role
-         return (matchingPerms.length > 0) ? role : null
+         }
       })
-
-      if (filteredRoles.length === 0) {
-         alert("No result found!")
-      }
-
-      return filteredRoles
    }
 }
