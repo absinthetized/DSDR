@@ -35,7 +35,7 @@
          searchedBy={role.matchedBy}
          matches = {role.matches}
          id = {role.id}
-         perc_matches ={role.perc_match.toFixed(2)}
+         perc_matches ={(role.perc_match * 100).toFixed(2)}
       />
    {:else}
       <h2 style="text-align: center;">Perform you search!</h2>
