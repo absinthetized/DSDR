@@ -19,12 +19,15 @@ export class Role {
         // "stage": "BETA",
         // "title": "Access Approval Approver"
 
+    // these come from backend
     public readonly description: string;
     public readonly name: string;
     public readonly stage: string;
     public readonly title: string;
     public readonly includedPermissions: Array<string>;
     public readonly id: number;
+
+    // these are computed
     public matches: number
     public matchedBy: string[]
     public perc_match: number
@@ -36,10 +39,12 @@ export class Role {
         //client side compiled
         this.matches = 0
         this.matchedBy = []
+        this.perc_match = 0
     }
 
     resetMatches() {
         this.matchedBy = []
         this.matches = 0
+        this.perc_match = 0
     }
 }
