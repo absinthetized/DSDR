@@ -11,7 +11,7 @@
    function handleSearch(event: CustomEvent) {
       searchTerm = event.detail.searchFor;
       roleSearchEngine.handleSearch(searchTerm)
-      console.log("found so many matches: " + roleSearchEngine.filteredRoles.length)
+      // console.log("found so many matches: " + roleSearchEngine.filteredRoles.length)
 
       roles = roleSearchEngine.filteredRoles
    }

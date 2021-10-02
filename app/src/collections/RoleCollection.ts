@@ -25,7 +25,7 @@ export class RoleCollection {
          alert(err)
       }
 
-      console.log(this._roles[0])
+      //console.log(this._roles[0])
       return this._roles
    }
 
