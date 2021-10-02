@@ -23,7 +23,10 @@ export class RoleSearchService {
 
       // get serch terms from search bar, each separated by space
       let searchTerms = searchString.split(" ")
-
+      // sort search so that, if not all the criteria are matched we can order 
+      // alphabetically by first maching term later
+      searchTerms.sort() 
+      
       // scan roles for each search term, this manipulates the roles values
       searchTerms.forEach(term => this.searchSingleTerm(term))
 
@@ -42,17 +45,27 @@ export class RoleSearchService {
       }
 
       // order by matching
-      // here is a small trick: 
-      // perc is always 0<=x<=1
-      // matchedBy size is always >=1
-      // by summing up the two I get ordering by number of matches first,
-      // by match percentage after.
-      //
-      // don't be fooled by possibly undefined values:
-      // 3.0 here is aways 2 matches with 100%
-      // as one can't have 3 matches with 0% match
-      this.filteredRoles.sort( (first: Role, second: Role) => { 
-         return (second.perc_match + second.matchedBy.length) - (first.perc_match + first.matchedBy.length)
+      this.filteredRoles.sort( (first: Role, second: Role) => {
+         // sort by number of matches
+         let criterium = second.matchedBy.length - first.matchedBy.length 
+         if (criterium != 0)
+            return criterium
+
+         // if 2 roles matches the same number of terms sort alphabetically
+         // by first term letter (we have sorted the terms so this doesn't
+         // depent on user input)
+         if (second.matchedBy[0][0] > first.matchedBy[0][0]) {
+            criterium = -1
+            return criterium
+         } else if (second.matchedBy[0][0] < first.matchedBy[0][0]) {
+            criterium = 1
+            return criterium
+         }
+
+         // if 2 roles match the same (number of) keywork(s), sort by percentage of
+         // permissions that match the terms
+         criterium = second.perc_match - first.perc_match
+         return criterium
       })
    }
 
