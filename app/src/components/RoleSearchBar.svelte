@@ -18,10 +18,11 @@
 
 <div>
    <InputGroup>
-      <InputGroupText>Enter a partial permission + ENTER</InputGroupText>
+      <InputGroupText>Enter a partial permission name + ENTER</InputGroupText>
       <Input
          placeholder="e.g.: 'loggi' will search for all permissions matching the 'loggi' substring. no regex for now sorry!"
          bind:value={searchString}
+         style="margin-bottom: 0px;"
       />
    </InputGroup>
 </div>
