@@ -1,7 +1,8 @@
 <script lang="ts">
    import RoleComponent from "./components/RoleComponent.svelte";
    import { RoleSearchService } from "./services/RoleSearchService";
-   import RoleSearchBar from "./components/RoleSearchBar.svelte";
+   import RoleSearchBar from "./components/RoleSearchBarComponent.svelte";
+   import FilterComponent from "./components/FilterComponent.svelte";
    import { Navbar, NavbarBrand } from "sveltestrap";  
 
    const roleSearchEngine = new RoleSearchService()
@@ -23,6 +24,7 @@
    </Navbar>
 
    <RoleSearchBar on:searchMessage={handleSearch} />
+   <FilterComponent></FilterComponent>
    <br />
 
    {#each roles as role}
