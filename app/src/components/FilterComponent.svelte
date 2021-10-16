@@ -23,9 +23,9 @@
 <Col style="align-text:center; margin-top:1em;">
    <Row>
       
-      <Col xs="2"><Input id="cAlpha" type="checkbox" label="Alpha" checked={doAlpha} on:change={() => doAlpha = !doAlpha}/></Col>
-      <Col xs="2"><Input id="cBeta" type="checkbox" label="Beta" checked={doBeta} on:change={() => doBeta = !doBeta}/></Col>
-      <Col xs="2"><Input id="cDeprec" type="checkbox" label="Deprecated" checked={doDeprec} on:change={() => doDeprec = !doDeprec}/></Col>
+      <Col xs="2"><Input id="cAlpha" type="checkbox" label="Alpha" bind:checked={doAlpha}/></Col>
+      <Col xs="2"><Input id="cBeta" type="checkbox" label="Beta" bind:checked={doBeta}/></Col>
+      <Col xs="2"><Input id="cDeprec" type="checkbox" label="Deprecated" bind:checked={doDeprec}/></Col>
       <Col>
          <Row>
             <Col><Label style="text-align: right;">cut off matches under</Label></Col>
