@@ -4,8 +4,10 @@
    import RoleSearchBar from "./components/RoleSearchBarComponent.svelte";
    import FilterComponent from "./components/FilterComponent.svelte";
    import { Navbar, NavbarBrand } from "sveltestrap";  
+   import { FilterService } from "./services/FilterService";
 
    const roleSearchEngine = new RoleSearchService()
+   const filter = new FilterService()
    let searchTerm = ""
    let roles = []
 
@@ -24,10 +26,22 @@
    </Navbar>
 
    <RoleSearchBar on:searchMessage={handleSearch} />
-   <FilterComponent></FilterComponent>
+   <FilterComponent 
+      bind:doAlpha={filter.doAlpha}
+      bind:doBeta={filter.doBeta}
+      bind:doDeprec={filter.doDeprec}
+      bind:doMinPerc={filter.doMinPerc}
+   ></FilterComponent>
    <br />
 
    {#each roles as role}
+      {#if (
+            (role.stage === 'ALPHA' && filter.doAlpha) || 
+            (role.stage === 'BETA' && filter.doBeta) ||
+            (role.stage === 'DEPRECATED' && filter.doDeprec) ||
+            (role.stage === 'GA')
+           ) && (role.perc_match*100) >= filter.doMinPerc
+      }
       <RoleComponent
          name={role.name}
          description={role.description}
@@ -39,6 +53,7 @@
          id = {role.id}
          perc_matches ={(role.perc_match * 100).toFixed(2)}
       />
+      {/if}
    {:else}
       <h2 style="text-align: center;">Perform you search!</h2>
    {/each}
