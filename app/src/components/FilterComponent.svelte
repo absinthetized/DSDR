@@ -10,27 +10,27 @@
 
       } else {
          inputbox.classList.remove("is-invalid")
-         doMinPerc = precheckValue/100
+         doMinPerc = precheckValue
       }
    }
 
-   export let doAlpha: Boolean = true
-   export let doBeta: Boolean = true
-   export let doDeprec: Boolean = true
-   export let doMinPerc: Number = 0
+   export let doAlpha: boolean
+   export let doBeta: boolean
+   export let doDeprec: boolean
+   export let doMinPerc: Number
 </script>
 
 <Col style="align-text:center; margin-top:1em;">
    <Row>
       
-      <Col xs="2"><Input id="cAlpha" type="checkbox" label="Alpha" checked on:change={() => doAlpha = !doAlpha}/></Col>
-      <Col xs="2"><Input id="cBeta" type="checkbox" label="Beta" checked on:change={() => doBeta = !doBeta}/></Col>
-      <Col xs="2"><Input id="cDeprec" type="checkbox" label="Deprecated" checked on:change={() => doDeprec = !doDeprec}/></Col>
+      <Col xs="2"><Input id="cAlpha" type="checkbox" label="Alpha" checked={doAlpha} on:change={() => doAlpha = !doAlpha}/></Col>
+      <Col xs="2"><Input id="cBeta" type="checkbox" label="Beta" checked={doBeta} on:change={() => doBeta = !doBeta}/></Col>
+      <Col xs="2"><Input id="cDeprec" type="checkbox" label="Deprecated" checked={doDeprec} on:change={() => doDeprec = !doDeprec}/></Col>
       <Col>
          <Row>
             <Col><Label style="text-align: right;">cut off matches under</Label></Col>
             <Col><Input type="number" id="cPerc" min={0} max={100} 
-                  placeholder="0%" feedback="range 0-100%" on:change={updatePerc}/></Col>
+                  placeholder="0%" value={doMinPerc.toString()} feedback="range 0-100%" on:change={updatePerc}/></Col>
          </Row>
       </Col>
    </Row>
