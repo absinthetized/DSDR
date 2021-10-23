@@ -1,12 +1,12 @@
 ## Intro
 
 A way to search for multiple permissions among different GCP roles. This tool performs ORed searches to match GCP roles for all the permissions you request in the search input box. Partial permission names can be used and are matched agains all the available permissions.
-this tool is developed in typescript with svelte and sveltstrap on the front end. The backend is currently a proto quickly written in python 3 with flask
+this tool is developed in typescript with svelte and sveltstrap on the front end. The backend is currently a proto quickly written in go with gin
 
 ## Pre req
 
 * npm with node js (v.12.22 is used here)
-* python 3.9 with venv
+* python 1.17.2+
 
 ## Setup
 
@@ -21,7 +21,7 @@ npm install
 
 ```
 cd server
-./bin/install -r requirements
+go mod init
 ```
 
 ## Run develop env
@@ -36,12 +36,11 @@ This will run the frontend compiling the required static files into a server fol
 ### start the server
 
 ```
-cd server/src && ./run-server.sh
+cd server && go build -tags=jsoniter -o dsdr && ./dsdr
 ```
 
-This will run the flask devel server which will monitor even for changed static files (frontend) reloading the serving env after any modification either from frontend or from backend.
-
-the server is accessible on localhost:5001
+This will run the gin server. No hot reload of server or frontend yet, sorry.
+The server is accessible on localhost:8080
 
 ## Preseeding
 
