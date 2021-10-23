@@ -36,7 +36,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: '../server/src/static/build/bundle.js'
+		file: '../server/static/build/bundle.js'
 	},
 	plugins: [
 		svelte({
