@@ -33,8 +33,13 @@ export class RoleSearchService {
       // extract only those roles whose match the search terms
       this.filteredRoles = this.rolesC.roles.filter( role => {
          // compute percentage of permissions matching against the search term
-         if (role.includedPermissions.length > 0)
-            role.perc_match += role.matches / role.includedPermissions.length
+         try {
+            if (role.includedPermissions.length > 0)
+               role.perc_match += role.matches / role.includedPermissions.length
+         
+        } catch {
+           console.log(role)
+        }
 
          return (role.perc_match > 0) ? role : null
       })

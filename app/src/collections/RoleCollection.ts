@@ -12,7 +12,7 @@ export class RoleCollection {
 
    async getFromServer(): Promise<Array<Role>> {
       try {
-         const resp = await fetch('http://localhost:5001/roles')
+         const resp = await fetch('http://localhost:8080/roles')
          try {
             const data = await resp.json()
             data.map(item => this._roles.push(new Role(item)))
@@ -25,7 +25,7 @@ export class RoleCollection {
          alert(err)
       }
 
-      //console.log(this._roles[0])
+      console.log(this._roles[0])
       return this._roles
    }
 
