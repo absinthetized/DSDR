@@ -6,7 +6,8 @@ this tool is developed in typescript with svelte and sveltstrap on the front end
 ## Pre req
 
 * npm with node js (v.12.22 is used here)
-* python 1.17.2+
+* go 1.17.x+
+* [air](https://github.com/cosmtrek/air) (hotreload for gin)
 
 ## Setup
 
@@ -31,15 +32,17 @@ go mod init
 ```
 cd app && npm run dev
 ```
-This will run the frontend compiling the required static files into a server folder (under server/static/build)
+This will run the frontend compiling the required static files into a server folder (under server/static/build).
+
+The serving is performed by the go server and not the develp svelte server (see below). 
 
 ### start the server
 
 ```
-cd server && go build -tags=jsoniter -o dsdr && ./dsdr
+cd server && air
 ```
 
-This will run the gin server. No hot reload of server or frontend yet, sorry.
+This will run the gin server with hot reload (even when you change the svelte front end)
 The server is accessible on localhost:8080
 
 ## Preseeding
@@ -47,7 +50,7 @@ The server is accessible on localhost:8080
 In the current state the backend is a proto, you need to populate a pseudo DB by running the `role_db_builder.sh` script from the root of the repo. If you skip this step the backend wont run. To run the preseeding script you need to autenticate yourself into the GCP as the script makes use of the gcloud command.
 
 ```
-mkdir ./server/src/roles
+mkdir ./server/roles
 ./role_db_builder.sh
 ```
 
