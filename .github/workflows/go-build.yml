@@ -2,9 +2,13 @@ name: Go Build
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - './server/*'
+    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    paths:
+      - './server/*'
+    branches: [ main, develop ]
 
 jobs:
 
