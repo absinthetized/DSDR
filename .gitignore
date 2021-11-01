@@ -107,3 +107,4 @@ server/static/build/bundle.js
 server/static/build/bundle.js.map
 server/dsdr
 server/roles/
+server/tmp/
