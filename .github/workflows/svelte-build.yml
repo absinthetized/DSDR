@@ -1,0 +1,25 @@
+name: Go Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Build
+      run: cd ./app && npm install && npm run build
+
+    # - name: Test
+    #   run: cd ./server && go test -v .
