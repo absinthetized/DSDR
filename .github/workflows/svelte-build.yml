@@ -3,11 +3,11 @@ name: Svelte Build
 on:
   push:
     paths:
-      - './app/*'
-    branches: [ develop ]
+      - 'app/**'
+    branches: [ main, develop ]
   pull_request:
     paths:
-      - './app/*'
+      - 'app/**'
     branches: [ main, develop ]
 
 jobs:
