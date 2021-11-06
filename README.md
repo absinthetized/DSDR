@@ -55,3 +55,10 @@ mkdir ./server/roles
 ```
 
 this will take a bit of time depending on your machine and network latency. still you can interrupt the process and have a devel env even if not all the roles are downloaded from GCP. Just mind that killing the script can lead to some corrupted json files in the local pseudo DB, just remove them and the app will run.
+
+## TODO
+
+server side search
+    - first time we do not render
+    - styling remain corrupted after multiple checks
+    - current search is fake and returns the entire DB
