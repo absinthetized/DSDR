@@ -36,6 +36,8 @@ func main() {
 		} else {
 			c.JSON(http.StatusOK, roles)
 		}
+
+		log.Print("query string is:", searchString)
 	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080
