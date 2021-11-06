@@ -2,7 +2,7 @@ import { RoleCollection } from "../collections/RoleCollection";
 import type { Role } from "../models/role"
 
 export class RoleSearchService {
-   public filteredRoles: Array<Role> = [];
+   private filteredRoles: Array<Role> = [];
 
    private rolesC: RoleCollection
 
@@ -10,7 +10,7 @@ export class RoleSearchService {
       this.rolesC = new RoleCollection();
    }
 
-   async handleSearch(searchString: string) {
+   async handleSearch(searchString: string): Promise<Array<Role>> {
       // stub for server side seach - does nothing for now and passes to client side search
       let roles = await this.rolesC.search(searchString)
 
@@ -22,7 +22,7 @@ export class RoleSearchService {
       if (searchString === "") {
          //this.filteredRoles = [...this.rolesC.roles]
          this.filteredRoles = [...roles]
-         return
+         return this.filteredRoles
       }
 
       // get serch terms from search bar, each separated by space
@@ -51,7 +51,7 @@ export class RoleSearchService {
 
       if (this.filteredRoles.length === 0) {
          alert("No result found!")
-         return
+         return []
       }
 
       // order by matching
@@ -77,9 +77,11 @@ export class RoleSearchService {
          criterium = second.perc_match - first.perc_match
          return criterium
       })
+
+      return this.filteredRoles
    }
 
-   searchSingleTerm(roles: Array<Role>, searchTerm: string) {
+   private searchSingleTerm(roles: Array<Role>, searchTerm: string) {
       let term = new RegExp(searchTerm)
       
       // AMEND this.rolesC.roles.forEach(role => {
