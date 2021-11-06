@@ -5,13 +5,14 @@
 
 version: 2
 updates:
-    target-branch: "develop"
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/app" # Location of package manifests
+    target-branch: "develop"
     schedule:
       interval: "weekly"
       day: "friday"
   - package-ecosystem: "gomod" # See documentation for possible values
+    target-branch: "develop"
     directory: "/server" # Location of package manifests
     schedule:
       interval: "weekly"
