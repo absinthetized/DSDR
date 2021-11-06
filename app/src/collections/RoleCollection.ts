@@ -1,4 +1,5 @@
 import { Role } from "../models/role";
+import { serverUrl } from "../config";
 
 /*
 a class to retrieve and serve role models
@@ -12,7 +13,7 @@ export class RoleCollection {
 
    async getFromServer(): Promise<Array<Role>> {
       try {
-         const resp = await fetch('http://localhost:8080/roles')
+         const resp = await fetch(serverUrl + '/roles')
          try {
             const data = await resp.json()
             data.map(item => this._roles.push(new Role(item)))
