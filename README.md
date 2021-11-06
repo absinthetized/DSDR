@@ -59,6 +59,5 @@ this will take a bit of time depending on your machine and network latency. stil
 ## TODO
 
 server side search
-    - first time we do not render
     - styling remain corrupted after multiple checks
     - current search is fake and returns the entire DB
