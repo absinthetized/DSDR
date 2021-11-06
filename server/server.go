@@ -24,7 +24,7 @@ func main() {
 	r.GET("/roles", func(c *gin.Context) {
 		roles, err := db_parser()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}
 
 		c.JSON(http.StatusOK, roles)
