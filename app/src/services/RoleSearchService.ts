@@ -8,16 +8,20 @@ export class RoleSearchService {
 
    constructor() {
       this.rolesC = new RoleCollection();
-      this.rolesC.getFromServer()
    }
 
-   handleSearch(searchString: string) {
+   async handleSearch(searchString: string) {
+      // stub for server side seach - does nothing for now and passes to client side search
+      let roles = await this.rolesC.search(searchString)
+
       // init stats
-      this.rolesC.roles.forEach(role => role.resetMatches())
+      // AMEND this.rolesC.roles.forEach(role => role.resetMatches())
+      roles.forEach(role => role.resetMatches())
 
       // nothing to do here, just return the whole roles set
       if (searchString === "") {
-         this.filteredRoles = [...this.rolesC.roles]
+         //this.filteredRoles = [...this.rolesC.roles]
+         this.filteredRoles = [...roles]
          return
       }
 
@@ -28,10 +32,11 @@ export class RoleSearchService {
       searchTerms.sort() 
       
       // scan roles for each search term, this manipulates the roles values
-      searchTerms.forEach(term => this.searchSingleTerm(term))
+      searchTerms.forEach(term => this.searchSingleTerm(roles, term))
 
       // extract only those roles whose match the search terms
-      this.filteredRoles = this.rolesC.roles.filter( role => {
+      // AMEND this.filteredRoles = this.rolesC.roles.filter( role => {
+      this.filteredRoles = roles.filter( role => {
          // compute percentage of permissions matching against the search term
          try {
             if (role.includedPermissions.length > 0)
@@ -74,10 +79,11 @@ export class RoleSearchService {
       })
    }
 
-   searchSingleTerm(searchTerm: string) {
+   searchSingleTerm(roles: Array<Role>, searchTerm: string) {
       let term = new RegExp(searchTerm)
       
-      this.rolesC.roles.forEach(role => {
+      // AMEND this.rolesC.roles.forEach(role => {
+      roles.forEach(role => {
          //console.log(role)
          if (role.includedPermissions === undefined)
             return

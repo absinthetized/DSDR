@@ -11,9 +11,10 @@ export class RoleCollection {
       this._roles = [] //init
    }
 
-   async getFromServer(): Promise<Array<Role>> {
+   // stub for server side search - cureently just returns all the roles as "getFromServer"
+   async search(searchString: string): Promise<Array<Role>> {      
       try {
-         const resp = await fetch(serverUrl + '/roles')
+         const resp = await fetch(serverUrl + '/search?query=' + searchString)
          try {
             const data = await resp.json()
             data.map(item => this._roles.push(new Role(item)))
