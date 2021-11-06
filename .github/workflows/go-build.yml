@@ -3,11 +3,11 @@ name: Go Build
 on:
   push:
     paths:
-      - './server/*'
-    branches: [ develop ]
+      - 'server/**'
+    branches: [ main, develop ]
   pull_request:
     paths:
-      - './server/*'
+      - 'server/**'
     branches: [ main, develop ]
 
 jobs:
