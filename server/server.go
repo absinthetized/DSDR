@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dsdr/search"
+	"dsdr/services"
 	"log"
 	"net/http"
 
@@ -28,7 +28,7 @@ func main() {
 
 		log.Print("query string is:", searchString)
 
-		roles, err := search.SearchRole(searchString)
+		roles, err := services.SearchRole(searchString)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}
