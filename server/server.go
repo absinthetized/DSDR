@@ -21,21 +21,19 @@ func main() {
 	// serves a search to the front end - mockup for now
 	r.GET("/search", func(c *gin.Context) {
 		var searchString string
+		err := c.ShouldBindQuery(&searchString)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		}
 
-		roles, err := search.DB_parser()
+		log.Print("query string is:", searchString)
+
+		roles, err := search.SearchRole(searchString)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}
 
-		// just return the whole DB for now - client will perform the search in this mockup
-		if c.ShouldBindQuery(&searchString) == nil {
-			c.JSON(http.StatusOK, roles) //to be changed with proper search
-
-		} else {
-			c.JSON(http.StatusOK, roles)
-		}
-
-		log.Print("query string is:", searchString)
+		c.JSON(http.StatusOK, roles)
 	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080

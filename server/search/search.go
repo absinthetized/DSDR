@@ -7,8 +7,25 @@ import (
 	"os"
 )
 
-//DB_parser loads IAM info from the fake DB
-func DB_parser() ([]Role, error) {
+// Role models the json info of GCP IAM roles
+type Role struct {
+	Description         string   `json:"description"`
+	Name                string   `json:"name"`
+	Stage               string   `json:"stage"`
+	Title               string   `json:"title"`
+	IncludedPermissions []string `json:"includedPermissions"`
+	Id                  int      `json:"id"`
+}
+
+// SearchRole returns the roles whose permissions match the provided searchString
+// searchString is a string of space separated search terms
+func SearchRole(searchString string) ([]Role, error) {
+	//just fake the search for now and simply load the full database
+	return db_parser()
+}
+
+//db_parser loads IAM info from the fake DB
+func db_parser() ([]Role, error) {
 	role_dir := "./roles"
 	files, err := ioutil.ReadDir(role_dir)
 
@@ -39,14 +56,4 @@ func DB_parser() ([]Role, error) {
 	}
 
 	return roles, nil
-}
-
-// Role models the json info of GCP IAM roles
-type Role struct {
-	Description         string   `json:"description"`
-	Name                string   `json:"name"`
-	Stage               string   `json:"stage"`
-	Title               string   `json:"title"`
-	IncludedPermissions []string `json:"includedPermissions"`
-	Id                  int      `json:"id"`
 }
