@@ -20,14 +20,22 @@ func main() {
 	r.StaticFile("/global.css", "./static/global.css")
 	r.StaticFile("/", "./static/index.html")
 
-	// serve the mock DB to the frontend
-	r.GET("/roles", func(c *gin.Context) {
+	// serves a search to the front end - mockup for now
+	r.GET("/search", func(c *gin.Context) {
+		var searchString string
+
 		roles, err := db_parser()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}
 
-		c.JSON(http.StatusOK, roles)
+		// just return the whole DB for now - client will perform the search in this mockup
+		if c.ShouldBindQuery(&searchString) == nil {
+			c.JSON(http.StatusOK, roles) //to be changed with proper search
+
+		} else {
+			c.JSON(http.StatusOK, roles)
+		}
 	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080
