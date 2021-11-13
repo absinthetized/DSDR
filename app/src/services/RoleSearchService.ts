@@ -15,7 +15,6 @@ export class RoleSearchService {
       let roles = await this.rolesC.search(searchString)
 
       // init stats
-      // AMEND this.rolesC.roles.forEach(role => role.resetMatches())
       roles.forEach(role => role.resetMatches())
 
       // nothing to do here, just return the whole roles set
@@ -35,7 +34,6 @@ export class RoleSearchService {
       searchTerms.forEach(term => this.searchSingleTerm(roles, term))
 
       // extract only those roles whose match the search terms
-      // AMEND this.filteredRoles = this.rolesC.roles.filter( role => {
       this.filteredRoles = roles.filter( role => {
          // compute percentage of permissions matching against the search term
          try {
@@ -84,7 +82,6 @@ export class RoleSearchService {
    private searchSingleTerm(roles: Array<Role>, searchTerm: string) {
       let term = new RegExp(searchTerm)
       
-      // AMEND this.rolesC.roles.forEach(role => {
       roles.forEach(role => {
          //console.log(role)
          if (role.includedPermissions === undefined)
