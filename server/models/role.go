@@ -8,4 +8,8 @@ type Role struct {
 	Title               string   `json:"title"`
 	IncludedPermissions []string `json:"includedPermissions"`
 	Id                  int      `json:"id"`
+
+	// TODO: split and embed previous fields: these fields are computed and not retrieved by DB
+	Matches   int      `json:"matches"`
+	MatchedBy []string `json:"matchedBy"`
 }
