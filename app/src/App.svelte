@@ -13,6 +13,7 @@
 
    async function handleSearch(event: CustomEvent) {
       searchTerm = event.detail.searchFor;
+      roles = [] //forces reinit of array and fixes repaint of badges for GA/BETA/...
       roles = await roleSearchEngine.handleSearch(searchTerm)
       // console.log("found so many matches: " + roleSearchEngine.filteredRoles.length)
    }
