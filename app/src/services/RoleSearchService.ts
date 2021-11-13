@@ -2,23 +2,26 @@ import { RoleCollection } from "../collections/RoleCollection";
 import type { Role } from "../models/role"
 
 export class RoleSearchService {
-   public filteredRoles: Array<Role> = [];
+   private filteredRoles: Array<Role> = [];
 
    private rolesC: RoleCollection
 
    constructor() {
       this.rolesC = new RoleCollection();
-      this.rolesC.getFromServer()
    }
 
-   handleSearch(searchString: string) {
+   async handleSearch(searchString: string): Promise<Array<Role>> {
+      // stub for server side seach - does nothing for now and passes to client side search
+      let roles = await this.rolesC.search(searchString)
+
       // init stats
-      this.rolesC.roles.forEach(role => role.resetMatches())
+      roles.forEach(role => role.resetMatches())
 
       // nothing to do here, just return the whole roles set
       if (searchString === "") {
-         this.filteredRoles = [...this.rolesC.roles]
-         return
+         //this.filteredRoles = [...this.rolesC.roles]
+         this.filteredRoles = [...roles]
+         return this.filteredRoles
       }
 
       // get serch terms from search bar, each separated by space
@@ -28,10 +31,10 @@ export class RoleSearchService {
       searchTerms.sort() 
       
       // scan roles for each search term, this manipulates the roles values
-      searchTerms.forEach(term => this.searchSingleTerm(term))
+      searchTerms.forEach(term => this.searchSingleTerm(roles, term))
 
       // extract only those roles whose match the search terms
-      this.filteredRoles = this.rolesC.roles.filter( role => {
+      this.filteredRoles = roles.filter( role => {
          // compute percentage of permissions matching against the search term
          try {
             if (role.includedPermissions.length > 0)
@@ -46,7 +49,7 @@ export class RoleSearchService {
 
       if (this.filteredRoles.length === 0) {
          alert("No result found!")
-         return
+         return []
       }
 
       // order by matching
@@ -72,12 +75,14 @@ export class RoleSearchService {
          criterium = second.perc_match - first.perc_match
          return criterium
       })
+
+      return this.filteredRoles
    }
 
-   searchSingleTerm(searchTerm: string) {
+   private searchSingleTerm(roles: Array<Role>, searchTerm: string) {
       let term = new RegExp(searchTerm)
       
-      this.rolesC.roles.forEach(role => {
+      roles.forEach(role => {
          //console.log(role)
          if (role.includedPermissions === undefined)
             return

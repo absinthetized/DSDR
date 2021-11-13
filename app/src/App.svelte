@@ -11,12 +11,11 @@
    let searchTerm = ""
    let roles = []
 
-   function handleSearch(event: CustomEvent) {
+   async function handleSearch(event: CustomEvent) {
       searchTerm = event.detail.searchFor;
-      roleSearchEngine.handleSearch(searchTerm)
+      roles = [] //forces reinit of array and fixes repaint of badges for GA/BETA/...
+      roles = await roleSearchEngine.handleSearch(searchTerm)
       // console.log("found so many matches: " + roleSearchEngine.filteredRoles.length)
-
-      roles = roleSearchEngine.filteredRoles
    }
 </script>
 
