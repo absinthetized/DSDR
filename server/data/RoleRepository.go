@@ -31,7 +31,12 @@ func (r *RoleRepository) FindAll() (roles []models.Role) {
 
 // FindPermissionsByRegexArray scans the repo for the passed items and concats the results
 func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.Role, error) {
-	// TODO ,maybe not here, reset roles stats
+	// TODO : the client side version overrides roles properties but here on the
+	// server we have concurrency and we can not modify roles state
+	// also doesn't make sense to clone the entire repo for each user... mumble mumble :D
+	//
+	// just modify models.Role to not embed but to point to a BasicIAMRole and assign the maching
+	// BasicIAMRole to a Role built ondemand for the user query...
 
 	var roles []models.Role
 
@@ -66,7 +71,7 @@ func (r *RoleRepository) searchSingleTerm(searchTerm string) error {
 	//    })
 
 	for _, role := range r.roles {
-		if role.IncludedPermissions != nil { //or have to check len?!
+		if len(role.IncludedPermissions) > 0 {
 			var matchingPerms []string
 
 			for _, perm := range role.IncludedPermissions {
@@ -95,6 +100,8 @@ func (r *RoleRepository) searchSingleTerm(searchTerm string) error {
 
 //aux function. db_parser loads IAM info from the fake DB
 func db_parser() ([]models.Role, error) {
+
+	// TODO: use BasicIAMRole to load info
 	role_dir := "./roles"
 	files, err := ioutil.ReadDir(role_dir)
 
