@@ -16,11 +16,9 @@ func SearchRole(searchString string, repo *data.RoleRepository) ([]models.Role, 
 	}
 
 	// separate the search terms in a slice
-	items := strings.Split(searchString, " ")
-
 	// sort search so that, if not all the criteria are matched we can order
 	// alphabetically by first maching term later
+	items := strings.Split(searchString, " ")
 	sort.Strings(items)
-
-	return repo.FindPermissionsByRegexArray(items), nil //check if err is of any usage in this context..
+	return repo.FindPermissionsByRegexArray(items)
 }
