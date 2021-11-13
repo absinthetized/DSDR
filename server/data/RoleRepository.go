@@ -23,15 +23,13 @@ func NewRoleRepository() (*RoleRepository, error) {
 	return repo, err
 }
 
-// SearchFor scans the repo for the passed items and concats the results
-func (r *RoleRepository) SearchFor(terms []string) []models.Role {
-	// no search term has been passed, just return the whole DB!
-	if len(terms) == 0 {
-		return r.roles
-	}
+// FindAll returns the whole dataset
+func (r *RoleRepository) FindAll() (roles []models.Role) {
+	return r.roles
+}
 
-	// here we perform an actual search
-
+// FindPermissionsByRegexArray scans the repo for the passed items and concats the results
+func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) []models.Role {
 	var roles []models.Role
 	for _, term := range terms {
 		roles = r.searchSingleTerm(term)
