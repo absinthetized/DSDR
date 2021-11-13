@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 
 	models "dsdr/models" // temporary patch
 )
@@ -29,18 +30,30 @@ func (r *RoleRepository) FindAll() (roles []models.Role) {
 }
 
 // FindPermissionsByRegexArray scans the repo for the passed items and concats the results
-func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) []models.Role {
+func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.Role, error) {
+	// TODO ,maybe not here, reset roles stats
+
 	var roles []models.Role
+
 	for _, term := range terms {
-		roles = r.searchSingleTerm(term)
+		err := r.searchSingleTerm(term)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return roles
+	// TODO: perform filtering and return matching roles
+
+	return roles, nil
 }
 
 // searchSingleTerm is auxiliary and maches a single terms against all the DB
-func (r *RoleRepository) searchSingleTerm(term string) []models.Role {
-	//let term = new RegExp(searchTerm)
+func (r *RoleRepository) searchSingleTerm(searchTerm string) error {
+	term, err := regexp.Compile(searchTerm)
+	if err != nil {
+		return err
+	}
+
 	//
 	// roles.forEach(role => {
 	//    //console.log(role)
@@ -52,15 +65,32 @@ func (r *RoleRepository) searchSingleTerm(term string) []models.Role {
 	// 	  return term.test(perm) ? true : false
 	//    })
 
-	//    //add the number of matches for this search term
-	//    if (matchingPerms.length > 0) {
-	// 	  role.matches += matchingPerms.length
-	// 	  role.matchedBy.push(searchTerm)
-	//    }
-	// })
+	for _, role := range r.roles {
+		if role.IncludedPermissions != nil { //or have to check len?!
+			var matchingPerms []string
 
-	// just a mockup
-	return r.roles
+			for _, perm := range role.IncludedPermissions {
+				match := term.FindString(perm)
+				if len(match) > 0 {
+					matchingPerms = append(matchingPerms, match)
+				}
+			}
+
+			//    //add the number of matches for this search term
+			//    if (matchingPerms.length > 0) {
+			// 	  role.matches += matchingPerms.length
+			// 	  role.matchedBy.push(searchTerm)
+			//    }
+			// })
+
+			if len(matchingPerms) > 0 {
+				role.Matches += len(matchingPerms)
+				role.MatchedBy = append(role.MatchedBy, matchingPerms...)
+			}
+		}
+	}
+
+	return nil
 }
 
 //aux function. db_parser loads IAM info from the fake DB
