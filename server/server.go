@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"dsdr/data"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +20,12 @@ func main() {
 	r.StaticFile("/global.css", "./static/global.css")
 	r.StaticFile("/", "./static/index.html")
 
+	// init the repo
+	DB, err := data.NewDB()
+	if err != nil {
+		panic("Unable to connect to roles repository. Aborting.")
+	}
+
 	// serves a search to the front end - mockup for now
 	r.GET("/search", func(c *gin.Context) {
 		var searchString string
@@ -28,7 +36,7 @@ func main() {
 
 		log.Print("query string is:", searchString)
 
-		roles, err := services.SearchRole(searchString)
+		roles, err := services.SearchRole(searchString, DB)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}

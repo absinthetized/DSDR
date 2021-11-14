@@ -1,16 +1,31 @@
 package data
 
 import (
+	"dsdr/models"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
-
-	models "dsdr/models" // temporary patch
 )
 
-//DB_parser loads IAM info from the fake DB
-func DB_parser() ([]models.Role, error) {
+// the roles repository mimiking an actual data layer (eg. a DB)
+type DB struct {
+	Roles []models.BasicIAMRole
+}
+
+// NewRoleRepository init a role repository
+func NewDB() (*DB, error) {
+	db := new(DB)
+	var err error
+
+	db.Roles, err = db_parser()
+	return db, err
+}
+
+//aux function. db_parser loads IAM info from the fake DB
+func db_parser() ([]models.BasicIAMRole, error) {
+
+	// TODO: use BasicIAMRole to load info
 	role_dir := "./roles"
 	files, err := ioutil.ReadDir(role_dir)
 
@@ -19,7 +34,7 @@ func DB_parser() ([]models.Role, error) {
 		return nil, err
 	}
 
-	var roles []models.Role
+	var roles []models.BasicIAMRole
 
 	for id, file := range files {
 		// read file
@@ -29,7 +44,7 @@ func DB_parser() ([]models.Role, error) {
 			return nil, err
 		}
 
-		var role models.Role
+		var role models.BasicIAMRole
 		err = json.Unmarshal(data, &role)
 		if err != nil {
 			log.Print(err)
