@@ -1,135 +1,101 @@
 package data
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"log"
-	"os"
 	"regexp"
 
-	models "dsdr/models" // temporary patch
+	models "dsdr/models"
 )
 
 // the roles repository mimiking an actual data layer (eg. a DB)
 type RoleRepository struct {
 	roles []models.Role
+	db    *DB
 }
 
 // NewRoleRepository init a role repository
-func NewRoleRepository() (*RoleRepository, error) {
+func NewRoleRepository(db *DB) *RoleRepository {
 	repo := new(RoleRepository)
-	var err error
+	repo.db = db
 
-	repo.roles, err = db_parser()
-	return repo, err
+	return repo
 }
 
 // FindAll returns the whole dataset
 func (r *RoleRepository) FindAll() (roles []models.Role) {
+	for _, IAM := range r.db.Roles {
+		r.roles = append(r.roles, *models.NewRoleFromIAM(IAM))
+	}
+
 	return r.roles
 }
 
-// FindPermissionsByRegexArray scans the repo for the passed items and concats the results
+// FindPermissionsByRegexArray scans the repo for the reuired permissions and filters out the resulting IAMs
 func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.Role, error) {
-	// TODO : the client side version overrides roles properties but here on the
-	// server we have concurrency and we can not modify roles state
-	// also doesn't make sense to clone the entire repo for each user... mumble mumble :D
-	//
-	// just modify models.Role to not embed but to point to a BasicIAMRole and assign the maching
-	// BasicIAMRole to a Role built ondemand for the user query...
+	var err error
 
-	var roles []models.Role
+	// this associates a IAM pointer to a Role so that we can
+	// quickly check if a Role has been already discovered among IAMs
+	var roleMap map[*models.BasicIAMRole]models.Role
 
+	// search for all matches in all IAMs
 	for _, term := range terms {
-		err := r.searchSingleTerm(term)
-		if err != nil {
-			return nil, err
+		err = r.searchSingleTerm(term, roleMap)
+		if err != nil { // this is abit raw I could notify a wang rather than interrupt the loop
+			break
 		}
 	}
 
-	// TODO: perform filtering and return matching roles
+	// extract matches and compute percentage of match againts the range of passed terms
+	var roleMatches []models.Role
+	for _, roleMatch := range roleMap {
+		roleMatch.PercMatch =
+			float32(roleMatch.Matches) / float32(len(roleMatch.IncludedPermissions))
 
-	return roles, nil
+		roleMatches = append(roleMatches, roleMatch)
+	}
+
+	return roleMatches, err
 }
 
-// searchSingleTerm is auxiliary and maches a single terms against all the DB
-func (r *RoleRepository) searchSingleTerm(searchTerm string) error {
+// searchSingleTerm is auxiliary and maches a single term against all the IAM DB
+func (r *RoleRepository) searchSingleTerm(searchTerm string, roleMap map[*models.BasicIAMRole]models.Role) error {
 	term, err := regexp.Compile(searchTerm)
 	if err != nil {
 		return err
 	}
 
-	//
-	// roles.forEach(role => {
-	//    //console.log(role)
-	//    if (role.includedPermissions === undefined)
-	// 	  return
+	// loop over all roles in the DB and search for permissions matching our term
+	for _, IAM := range r.db.Roles {
 
-	//    // let see if we match this search term
-	//    let matchingPerms = role.includedPermissions.filter(perm => {
-	// 	  return term.test(perm) ? true : false
-	//    })
-
-	for _, role := range r.roles {
-		if len(role.IncludedPermissions) > 0 {
-			var matchingPerms []string
-
-			for _, perm := range role.IncludedPermissions {
-				match := term.FindString(perm)
-				if len(match) > 0 {
-					matchingPerms = append(matchingPerms, match)
-				}
-			}
-
-			//    //add the number of matches for this search term
-			//    if (matchingPerms.length > 0) {
-			// 	  role.matches += matchingPerms.length
-			// 	  role.matchedBy.push(searchTerm)
-			//    }
-			// })
-
-			if len(matchingPerms) > 0 {
-				role.Matches += len(matchingPerms)
-				role.MatchedBy = append(role.MatchedBy, matchingPerms...)
-			}
+		// no perms for this IAM just continue (a case at least have been hit during tests)
+		if len(IAM.IncludedPermissions) == 0 {
+			continue
 		}
+
+		// count matches
+
+		var matchesNum int = 0
+
+		for _, perm := range IAM.IncludedPermissions {
+			matches := term.FindString(perm)
+			matchesNum += len(matches)
+		}
+
+		if matchesNum == 0 { // nothing to do here
+			continue
+		}
+
+		// if we match add/update this IAM in the Roles map
+		role, roleExists := roleMap[&IAM]
+		if !roleExists {
+			// add a new Role to the map
+			role = *models.NewRoleFromIAM(IAM)
+			roleMap[&IAM] = role
+		}
+
+		role.Matches += matchesNum
+		role.MatchedBy = append(role.MatchedBy, searchTerm)
 	}
 
 	return nil
-}
-
-//aux function. db_parser loads IAM info from the fake DB
-func db_parser() ([]models.Role, error) {
-
-	// TODO: use BasicIAMRole to load info
-	role_dir := "./roles"
-	files, err := ioutil.ReadDir(role_dir)
-
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-
-	var roles []models.Role
-
-	for id, file := range files {
-		// read file
-		data, err := ioutil.ReadFile(role_dir + string(os.PathSeparator) + file.Name())
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-
-		var role models.Role
-		err = json.Unmarshal(data, &role)
-		if err != nil {
-			log.Print(err)
-			return nil, err
-		}
-
-		role.Id = id
-		roles = append(roles, role)
-	}
-
-	return roles, nil
 }
