@@ -21,7 +21,7 @@ func main() {
 	r.StaticFile("/", "./static/index.html")
 
 	// init the repo
-	roleRepo, err := data.NewRoleRepository()
+	DB, err := data.NewDB()
 	if err != nil {
 		panic("Unable to connect to roles repository. Aborting.")
 	}
@@ -36,7 +36,7 @@ func main() {
 
 		log.Print("query string is:", searchString)
 
-		roles, err := services.SearchRole(searchString, roleRepo)
+		roles, err := services.SearchRole(searchString, DB)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err}) //c.JSON returns and ends the function
 		}
