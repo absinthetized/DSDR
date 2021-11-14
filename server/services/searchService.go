@@ -9,7 +9,9 @@ import (
 
 // SearchRole returns the roles whose permissions match the provided searchString
 // searchString is a string of space separated search terms
-func SearchRole(searchString string, repo *data.RoleRepository) ([]models.Role, error) {
+func SearchRole(searchString string, db *data.DB) ([]models.Role, error) {
+	repo := data.NewRoleRepository(db)
+
 	// no search term has been passed, just return the whole DB!
 	if len(searchString) == 0 {
 		return repo.FindAll(), nil
