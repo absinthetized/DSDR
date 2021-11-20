@@ -31,11 +31,15 @@ func (r *RoleRepository) FindAll() (roles []models.Role) {
 
 // FindPermissionsByRegexArray scans the repo for the reuired permissions and filters out the resulting IAMs
 func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.Role, error) {
+	if len(terms) == 0 {
+		return r.FindAll(), nil
+	}
+
 	var err error
 
 	// this associates a IAM pointer to a Role so that we can
 	// quickly check if a Role has been already discovered among IAMs
-	var roleMap map[*models.BasicIAMRole]models.Role
+	roleMap := make(map[*models.BasicIAMRole]models.Role)
 
 	// search for all matches in all IAMs
 	for _, term := range terms {
