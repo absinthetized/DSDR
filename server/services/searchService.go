@@ -3,6 +3,7 @@ package services
 import (
 	data "dsdr/data"
 	models "dsdr/models"
+	"errors"
 	"sort"
 	"strings"
 )
@@ -10,6 +11,10 @@ import (
 // SearchRole returns the roles whose permissions match the provided searchString
 // searchString is a string of space separated search terms
 func SearchRole(searchString string, db *data.DB) ([]models.Role, error) {
+	if db == nil {
+		return nil, errors.New("nil pointer for DB")
+	}
+
 	repo := data.NewRoleRepository(db)
 
 	// no search term has been passed, just return the whole DB!
