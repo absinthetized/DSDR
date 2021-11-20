@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // the roles repository mimiking an actual data layer (eg. a DB)
@@ -24,9 +25,13 @@ func NewDB() (*DB, error) {
 
 //aux function. db_parser loads IAM info from the fake DB
 func db_parser() ([]models.BasicIAMRole, error) {
+	this_dir, pathErr := filepath.Abs(".")
+	if pathErr != nil {
+		return nil, pathErr
+	}
 
-	// TODO: use BasicIAMRole to load info
-	role_dir := "./roles"
+	role_dir := filepath.Dir(this_dir) + string(os.PathSeparator) + "roles"
+
 	files, err := ioutil.ReadDir(role_dir)
 
 	if err != nil {
