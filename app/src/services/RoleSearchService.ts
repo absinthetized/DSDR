@@ -9,7 +9,6 @@ export class RoleSearchService {
    }
 
    async handleSearch(searchString: string): Promise<Array<Role>> {
-      // stub for server side search - does nothing for now and passes to client side search
       let roles = await this.rolesC.search(searchString)
 
       if (roles.length === 0) {
