@@ -19,13 +19,13 @@ func NewDB() (*DB, error) {
 	db := new(DB)
 	var err error
 
-	db.Roles, err = db_parser()
+	db.Roles, err = db_parser(".")
 	return db, err
 }
 
 //aux function. db_parser loads IAM info from the fake DB
-func db_parser() ([]models.BasicIAMRole, error) {
-	this_dir, pathErr := filepath.Abs(".")
+func db_parser(folder string) ([]models.BasicIAMRole, error) {
+	this_dir, pathErr := filepath.Abs(folder)
 	if pathErr != nil {
 		return nil, pathErr
 	}
