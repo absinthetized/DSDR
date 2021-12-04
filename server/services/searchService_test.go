@@ -42,7 +42,7 @@ func TestSearchRoleDBInited(t *testing.T) {
 func TestSearchRoleAllInited(t *testing.T) {
 	//both properly inited - here we have to mock the repo...
 	//TODO: this is a wrong test: depending on the string result could be empty
-	var testSearchString = "compute"
+	var testSearchString = "compute network storage"
 	testDB, _ := data.NewDB()
 
 	roles, err := SearchRole(testSearchString, testDB)
