@@ -19,30 +19,29 @@ func TestFindAll(t *testing.T) {
 	}
 }
 
-// // FindPermissionsByRegexArray scans the repo for the reuired permissions and filters out the resulting IAMs
-// func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.Role, error) {
-// 	var err error
+func TestFindPermissionsByRegexArrayEmptyArray(t *testing.T) {
+	var emptyInput []string
 
-// 	// this associates a IAM pointer to a Role so that we can
-// 	// quickly check if a Role has been already discovered among IAMs
-// 	roleMap := make(map[*models.BasicIAMRole]models.Role)
+	db, _ := NewDB()
+	repo := NewRoleRepository(db)
+	roles, err := repo.FindPermissionsByRegexArray(emptyInput)
 
-// 	// search for all matches in all IAMs
-// 	for _, term := range terms {
-// 		err = r.searchSingleTerm(term, roleMap)
-// 		if err != nil { // this is abit raw I could notify a wang rather than interrupt the loop
-// 			break
-// 		}
-// 	}
+	if len(roles) != len(db.Roles) || err != nil {
+		t.Fatalf("find by permissions should return all results and no error if an empty array is passed")
+	}
+}
 
-// 	// extract matches and compute percentage of match againts the range of passed terms
-// 	var roleMatches []models.Role
-// 	for _, roleMatch := range roleMap {
-// 		roleMatch.PercMatch =
-// 			float32(roleMatch.Matches) / float32(len(roleMatch.IncludedPermissions))
+func TestFindPermissionsByRegexArrayFilledArray(t *testing.T) {
+	input := []string{"compute", "network"}
 
-// 		roleMatches = append(roleMatches, roleMatch)
-// 	}
+	db, _ := NewDB()
+	repo := NewRoleRepository(db)
+	roles, err := repo.FindPermissionsByRegexArray(input)
+
+	if len(roles) == 0 || err != nil {
+		t.Fatalf("find by permissions should return some results and no error if a well inited array is passed")
+	}
+}
 
 // 	return roleMatches, err
 // }
