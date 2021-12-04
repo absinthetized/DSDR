@@ -14,20 +14,15 @@ type DB struct {
 	Roles []models.BasicIAMRole
 }
 
-// NewRoleRepository init a role repository
-func NewDB() (*DB, error) {
-	db := new(DB)
-	var err error
-
-	db.Roles, err = db_parser(".")
-	return db, err
+type DBMethods interface {
+	Connect(string) ([]models.BasicIAMRole, error)
 }
 
-//aux function. db_parser loads IAM info from the fake DB
-func db_parser(folder string) ([]models.BasicIAMRole, error) {
+//Connect loads IAM info from the fake DB
+func (d *DB) Connect(folder string) error {
 	this_dir, pathErr := filepath.Abs(folder)
 	if pathErr != nil {
-		return nil, pathErr
+		return pathErr
 	}
 
 	role_dir := filepath.Dir(this_dir) + string(os.PathSeparator) + "roles"
@@ -36,29 +31,27 @@ func db_parser(folder string) ([]models.BasicIAMRole, error) {
 
 	if err != nil {
 		log.Print(err)
-		return nil, err
+		return err
 	}
-
-	var roles []models.BasicIAMRole
 
 	for id, file := range files {
 		// read file
 		data, err := ioutil.ReadFile(role_dir + string(os.PathSeparator) + file.Name())
 		if err != nil {
 			log.Print(err)
-			return nil, err
+			return err
 		}
 
 		var role models.BasicIAMRole
 		err = json.Unmarshal(data, &role)
 		if err != nil {
 			log.Print(err)
-			return nil, err
+			return err
 		}
 
 		role.Id = id
-		roles = append(roles, role)
+		d.Roles = append(d.Roles, role)
 	}
 
-	return roles, nil
+	return nil
 }
