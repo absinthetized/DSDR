@@ -111,3 +111,4 @@ server/tmp/
 server/src/static/build/bundle.css
 server/src/static/build/bundle.js
 server/src/static/build/bundle.js.map
+server/coverage.txt

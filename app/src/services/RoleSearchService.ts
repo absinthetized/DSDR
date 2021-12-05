@@ -2,55 +2,22 @@ import { RoleCollection } from "../collections/RoleCollection";
 import type { Role } from "../models/role"
 
 export class RoleSearchService {
-   public filteredRoles: Array<Role> = [];
-
    private rolesC: RoleCollection
 
    constructor() {
       this.rolesC = new RoleCollection();
-      this.rolesC.getFromServer()
    }
 
-   handleSearch(searchString: string) {
-      // init stats
-      this.rolesC.roles.forEach(role => role.resetMatches())
+   async handleSearch(searchString: string): Promise<Array<Role>> {
+      let roles = await this.rolesC.search(searchString)
 
-      // nothing to do here, just return the whole roles set
-      if (searchString === "") {
-         this.filteredRoles = [...this.rolesC.roles]
-         return
-      }
-
-      // get serch terms from search bar, each separated by space
-      let searchTerms = searchString.split(" ")
-      // sort search so that, if not all the criteria are matched we can order 
-      // alphabetically by first maching term later
-      searchTerms.sort() 
-      
-      // scan roles for each search term, this manipulates the roles values
-      searchTerms.forEach(term => this.searchSingleTerm(term))
-
-      // extract only those roles whose match the search terms
-      this.filteredRoles = this.rolesC.roles.filter( role => {
-         // compute percentage of permissions matching against the search term
-         try {
-            if (role.includedPermissions.length > 0)
-               role.perc_match += role.matches / role.includedPermissions.length
-         
-        } catch {
-           console.log(role)
-        }
-
-         return (role.perc_match > 0) ? role : null
-      })
-
-      if (this.filteredRoles.length === 0) {
+      if (roles.length === 0) {
          alert("No result found!")
-         return
+         return []
       }
 
       // order by matching
-      this.filteredRoles.sort( (first: Role, second: Role) => {
+      roles.sort( (first: Role, second: Role) => {
          // sort by number of matches
          let criterium = second.matchedBy.length - first.matchedBy.length 
          if (criterium != 0)
@@ -72,26 +39,7 @@ export class RoleSearchService {
          criterium = second.perc_match - first.perc_match
          return criterium
       })
-   }
 
-   searchSingleTerm(searchTerm: string) {
-      let term = new RegExp(searchTerm)
-      
-      this.rolesC.roles.forEach(role => {
-         //console.log(role)
-         if (role.includedPermissions === undefined)
-            return
-
-         // let see if we match this search term
-         let matchingPerms = role.includedPermissions.filter(perm => {
-            return term.test(perm) ? true : false
-         })
-
-         //add the number of matches for this search term
-         if (matchingPerms.length > 0) {
-            role.matches += matchingPerms.length
-            role.matchedBy.push(searchTerm)
-         }
-      })
+      return roles
    }
 }

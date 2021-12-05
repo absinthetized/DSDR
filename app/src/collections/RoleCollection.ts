@@ -1,4 +1,5 @@
 import { Role } from "../models/role";
+import { serverUrl } from "../config";
 
 /*
 a class to retrieve and serve role models
@@ -10,9 +11,10 @@ export class RoleCollection {
       this._roles = [] //init
    }
 
-   async getFromServer(): Promise<Array<Role>> {
+   // stub for server side search - cureently just returns all the roles as "getFromServer"
+   async search(searchString: string): Promise<Array<Role>> {      
       try {
-         const resp = await fetch('http://localhost:8080/roles')
+         const resp = await fetch(serverUrl + '/search?query=' + searchString)
          try {
             const data = await resp.json()
             data.map(item => this._roles.push(new Role(item)))
