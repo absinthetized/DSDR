@@ -6,54 +6,58 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // the roles repository mimiking an actual data layer (eg. a DB)
-type DB struct {
-	Roles []models.BasicIAMRole
+type FileSystemDB struct {
+	roles []models.BasicIAMRole
 }
 
-// NewRoleRepository init a role repository
-func NewDB() (*DB, error) {
-	db := new(DB)
-	var err error
-
-	db.Roles, err = db_parser()
-	return db, err
+// methods of DB objects
+type DB interface {
+	Connect(string) error
+	Roles() []models.BasicIAMRole
 }
 
-//aux function. db_parser loads IAM info from the fake DB
-func db_parser() ([]models.BasicIAMRole, error) {
+// implemente the DB interface for the FileSystemDB struct
+func (f *FileSystemDB) Connect(folder string) error {
+	this_dir, pathErr := filepath.Abs(folder)
+	if pathErr != nil {
+		return pathErr
+	}
 
-	// TODO: use BasicIAMRole to load info
-	role_dir := "./roles"
+	role_dir := filepath.Dir(this_dir) + string(os.PathSeparator) + "roles"
+
 	files, err := ioutil.ReadDir(role_dir)
 
 	if err != nil {
 		log.Print(err)
-		return nil, err
+		return err
 	}
-
-	var roles []models.BasicIAMRole
 
 	for id, file := range files {
 		// read file
 		data, err := ioutil.ReadFile(role_dir + string(os.PathSeparator) + file.Name())
 		if err != nil {
 			log.Print(err)
-			return nil, err
+			return err
 		}
 
 		var role models.BasicIAMRole
 		err = json.Unmarshal(data, &role)
 		if err != nil {
 			log.Print(err)
-			return nil, err
+			return err
 		}
 
 		role.Id = id
-		roles = append(roles, role)
+		f.roles = append(f.roles, role)
 	}
 
-	return roles, nil
+	return nil
+}
+
+func (f *FileSystemDB) Roles() []models.BasicIAMRole {
+	return f.roles
 }
