@@ -10,16 +10,18 @@ import (
 )
 
 // the roles repository mimiking an actual data layer (eg. a DB)
-type DB struct {
-	Roles []models.BasicIAMRole
+type FileSystemDB struct {
+	roles []models.BasicIAMRole
 }
 
-type DBMethods interface {
-	Connect(string) ([]models.BasicIAMRole, error)
+// methods of DB objects
+type DB interface {
+	Connect(string) error
+	Roles() []models.BasicIAMRole
 }
 
-//Connect loads IAM info from the fake DB
-func (d *DB) Connect(folder string) error {
+// implemente the DB interface for the FileSystemDB struct
+func (f *FileSystemDB) Connect(folder string) error {
 	this_dir, pathErr := filepath.Abs(folder)
 	if pathErr != nil {
 		return pathErr
@@ -50,8 +52,12 @@ func (d *DB) Connect(folder string) error {
 		}
 
 		role.Id = id
-		d.Roles = append(d.Roles, role)
+		f.roles = append(f.roles, role)
 	}
 
 	return nil
+}
+
+func (f *FileSystemDB) Roles() []models.BasicIAMRole {
+	return f.roles
 }
