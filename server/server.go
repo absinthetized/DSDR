@@ -21,7 +21,7 @@ func main() {
 	r.StaticFile("/", "./static/index.html")
 
 	// init the repo
-	var DB data.DB
+	var DB data.FileSystemDB
 	err := DB.Connect("roles")
 	if err != nil {
 		panic("Unable to connect to roles repository. Aborting.")
