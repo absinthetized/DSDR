@@ -58,6 +58,8 @@ this will take a bit of time depending on your machine and network latency. stil
 
 ## TODO
 
-server side search
-    - styling remain corrupted after multiple checks
-    - current search is fake and returns the entire DB
+- write unit tests for front-end
+- attach a proper DB (firebase)
+- add auth to avoid unwanted acceses)
+- build a container for the server to make it deployable in prod
+
