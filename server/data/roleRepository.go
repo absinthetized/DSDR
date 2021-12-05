@@ -9,11 +9,11 @@ import (
 // the roles repository mimiking an actual data layer (eg. a DB)
 type RoleRepository struct {
 	roles []models.Role
-	db    *DB
+	db    DB
 }
 
 // NewRoleRepository init a role repository
-func NewRoleRepository(db *DB) *RoleRepository {
+func NewRoleRepository(db DB) *RoleRepository {
 	repo := new(RoleRepository)
 	repo.db = db
 
@@ -22,7 +22,7 @@ func NewRoleRepository(db *DB) *RoleRepository {
 
 // FindAll returns the whole dataset
 func (r *RoleRepository) FindAll() (roles []models.Role) {
-	for _, IAM := range r.db.Roles {
+	for _, IAM := range r.db.Roles() {
 		r.roles = append(r.roles, *models.NewRoleFromIAM(IAM))
 	}
 
@@ -69,7 +69,7 @@ func (r *RoleRepository) searchSingleTerm(searchTerm string, roleMap map[*models
 	}
 
 	// loop over all roles in the DB and search for permissions matching our term
-	for _, IAM := range r.db.Roles {
+	for _, IAM := range r.db.Roles() {
 
 		// no perms for this IAM just continue (a case at least have been hit during tests)
 		if len(IAM.IncludedPermissions) == 0 {
