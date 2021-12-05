@@ -1,54 +1,45 @@
 package services
 
 import (
-	data "dsdr/data"
+	mocks "dsdr/mocks/data"
+	models "dsdr/models"
 
 	"testing"
 )
 
-func TestSearchRoleDefaultValues(t *testing.T) {
-	// default values
-	var testSearchString string
-	var testDB *data.DB
-
-	roles, err := SearchRole(testSearchString, testDB)
-	if roles != nil || err == nil {
-		t.Fatalf("nil DB pointer doesn't return error")
-	}
-}
-
-func TestSearchRoleStringInited(t *testing.T) {
-	// string custom but db default
-	var testSearchString = "compute"
-	var testDB *data.DB
-
-	roles, err := SearchRole(testSearchString, testDB)
-	if roles != nil || err == nil {
-		t.Fatalf("nil DB pointer doesn't return error")
-	}
-}
-
 func TestSearchRoleDBInited(t *testing.T) {
 	// string default, DB inited
 	var testSearchString string
-	var testDB data.DB
-	testDB.Connect("../roles")
+
+	var testDB mocks.DB
+	testDB.On("Connect", "../roles").Return(nil)
+	testDB.On("Roles").Return([]models.BasicIAMRole{
+		*new(models.BasicIAMRole),
+		*new(models.BasicIAMRole),
+	})
 
 	roles, err := SearchRole(testSearchString, &testDB)
-	if len(roles) != len(testDB.Roles) || err != nil {
+	if len(roles) != len(testDB.Roles()) || err != nil {
 		t.Fatalf("empty string should return no error and the entire DB")
 	}
 }
 
-func TestSearchRoleAllInited(t *testing.T) {
+func TestSearchRoleAllWellInited(t *testing.T) {
 	//both properly inited - here we have to mock the repo...
 	//TODO: this is a wrong test: depending on the string result could be empty
 	var testSearchString = "compute network storage"
-	var testDB data.DB
-	testDB.Connect("../roles")
+
+	pippo := *new(models.BasicIAMRole)
+	pippo.IncludedPermissions = []string{"computeUser", "networkUser"}
+	var testDB mocks.DB
+	testDB.On("Connect", "../roles").Return(nil)
+	testDB.On("Roles").Return([]models.BasicIAMRole{
+		*new(models.BasicIAMRole),
+		pippo,
+	})
 
 	roles, err := SearchRole(testSearchString, &testDB)
-	if len(roles) <= 0 || len(roles) >= len(testDB.Roles) || err != nil {
+	if len(roles) <= 0 || len(roles) > len(testDB.Roles()) || err != nil {
 		t.Fatalf("inited string should return no error and a fraction of the DB")
 	}
 }
