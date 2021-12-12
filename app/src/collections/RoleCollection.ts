@@ -13,6 +13,8 @@ export class RoleCollection {
 
    // stub for server side search - cureently just returns all the roles as "getFromServer"
    async search(searchString: string): Promise<Array<Role>> {      
+      this._roles = [] //re-init at each search
+
       try {
          const resp = await fetch(serverUrl + '/search?query=' + searchString)
          try {
