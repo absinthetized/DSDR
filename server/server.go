@@ -8,11 +8,13 @@ import (
 	"dsdr/data"
 
 	"github.com/gin-gonic/gin"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 func main() {
 	// start default gin middleware
 	r := gin.Default()
+	p := bluemonday.StrictPolicy()
 
 	// serve static resources from svelte
 	r.Static("/svelte", "./static/build")
@@ -35,6 +37,7 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		}
 
+		searchString = p.Sanitize(searchString)
 		log.Print("query string is:", searchString)
 
 		roles, err := services.SearchRole(searchString, &DB)
