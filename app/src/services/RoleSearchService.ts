@@ -1,11 +1,11 @@
-import { RoleCollection } from "../collections/RoleCollection";
+import type { RoleCollection } from "../collections/RoleCollection";
 import type { Role } from "../models/role"
 
 export class RoleSearchService {
    private rolesC: RoleCollection
 
-   constructor() {
-      this.rolesC = new RoleCollection();
+   constructor(collection: RoleCollection) {
+      this.rolesC = collection;
    }
 
    async handleSearch(searchString: string): Promise<Array<Role>> {
