@@ -5,8 +5,10 @@
    import FilterComponent from "./components/FilterComponent.svelte";
    import { Navbar, NavbarBrand } from "sveltestrap";  
    import { FilterService } from "./services/FilterService";
+   import { RoleCollection } from "./collections/RoleCollection";
 
-   const roleSearchEngine = new RoleSearchService()
+   const roleC = new RoleCollection()
+   const roleSearchEngine = new RoleSearchService(roleC)
    const filter = new FilterService()
    let searchTerm = ""
    let roles = []
