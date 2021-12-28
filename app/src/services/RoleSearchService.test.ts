@@ -54,6 +54,24 @@ test("sort-2-roles-alphabetically-test", async () => {
    expect(data).toStrictEqual([role1, role2])
 } )
 
+test("check-2-roles-alphabetically-already-sorted-test", async () => {
+   const role1 = new Role({})
+   const role2 = new Role({})
+   role1.matchedBy = ['a','b']
+   role2.matchedBy = ['z','w']
+
+   const twoRolesWithDifferentMatchesResponse = 
+   jest.fn<Promise<Array<Role>>, any>( _ =>  Promise.resolve([role1, role2]) ) //expected result
+      
+   const roleC = new RoleCollection()
+   roleC.search = twoRolesWithDifferentMatchesResponse
+   const roleSearchEngine = new RoleSearchService(roleC)
+
+   const data = await roleSearchEngine.handleSearch("")     
+   
+   expect(data).toStrictEqual([role1, role2])
+} )
+
 test("sort-2-roles-byperc-test", async () => {
    const role1 = new Role({})
    const role2 = new Role({})
