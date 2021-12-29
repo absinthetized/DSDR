@@ -29,9 +29,6 @@ export class RoleCollection {
          alert(err)
       }
 
-      console.log(this._roles[0])
       return this._roles
    }
-
-   get roles() { return this._roles }
 }
