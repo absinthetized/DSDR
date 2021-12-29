@@ -59,8 +59,8 @@ this will take a bit of time depending on your machine and network latency. stil
 ## TODO
 
 - write unit tests for front-end
+- add auth to avoid unwanted acceses
 - attach a proper DB (firebase)
 - add rest api to populate the DB from an "admin" page
-- add auth to avoid unwanted acceses
 - build a container for the server to make it deployable in prod
 
