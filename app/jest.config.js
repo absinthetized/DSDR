@@ -9,7 +9,13 @@ module.exports = {
     }
   },
   // for svelte component test via testing library
-  transform: {
-    "^.+\\.svelte$": "svelte-jester"
+  "transform": {
+    "^.+\\.svelte$": [
+      "svelte-jester",
+      {
+        "preprocess": "./svelte.config.mjs" //must use mjs extension or node explodes
+      }
+    ],
+    "^.+\\.ts$": "ts-jest"
   }
 };
