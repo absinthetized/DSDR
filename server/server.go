@@ -2,7 +2,6 @@ package main
 
 import (
 	"dsdr/services"
-	"log"
 	"net/http"
 
 	"dsdr/data"
@@ -10,6 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/microcosm-cc/bluemonday"
 )
+
+type SearchQuery struct {
+	Query string `form:"query"`
+}
 
 func main() {
 	// start default gin middleware
@@ -31,14 +34,13 @@ func main() {
 
 	// serves a search to the front end - mockup for now
 	r.GET("/search", func(c *gin.Context) {
-		var searchString string
-		err := c.ShouldBindQuery(&searchString)
+		var sq SearchQuery
+		err := c.ShouldBindQuery(&sq)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		}
 
-		searchString = p.Sanitize(searchString)
-		log.Print("query string is:", searchString)
+		searchString := p.Sanitize(sq.Query)
 
 		roles, err := services.SearchRole(searchString, &DB)
 		if err != nil {
