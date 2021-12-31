@@ -9,7 +9,7 @@
       dispatch('searchMessage', {'searchFor': searchString});
    }
 
-   document.onkeypress = function (e) {
+   document.onkeydown = function (e) {
       if (e.key === "Enter") {
          dispatchSearch();
       }

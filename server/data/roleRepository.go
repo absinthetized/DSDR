@@ -43,9 +43,9 @@ func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.R
 
 	// search for all matches in all IAMs
 	for _, term := range terms {
-		err = r.searchSingleTerm(term, roleMap)
-		if err != nil { // this is abit raw I could notify a wang rather than interrupt the loop
-			break
+		roleMap, err = r.searchSingleTerm(term, roleMap)
+		if err != nil { // this is abit raw I could notify a warn rather than interrupt the loop
+			return nil, err
 		}
 	}
 
@@ -62,14 +62,14 @@ func (r *RoleRepository) FindPermissionsByRegexArray(terms []string) ([]models.R
 }
 
 // searchSingleTerm is auxiliary and maches a single term against all the IAM DB
-func (r *RoleRepository) searchSingleTerm(searchTerm string, roleMap map[*models.BasicIAMRole]models.Role) error {
+func (r *RoleRepository) searchSingleTerm(searchTerm string, roleMap map[*models.BasicIAMRole]models.Role) (map[*models.BasicIAMRole]models.Role, error) {
 	term, err := regexp.Compile(searchTerm)
 	if err != nil {
-		return err
+		return roleMap, err
 	}
 
 	// loop over all roles in the DB and search for permissions matching our term
-	for _, IAM := range r.db.Roles() {
+	for i, IAM := range r.db.Roles() {
 
 		// no perms for this IAM just continue (a case at least have been hit during tests)
 		if len(IAM.IncludedPermissions) == 0 {
@@ -81,25 +81,35 @@ func (r *RoleRepository) searchSingleTerm(searchTerm string, roleMap map[*models
 		var matchesNum int = 0
 
 		for _, perm := range IAM.IncludedPermissions {
-			matches := term.FindString(perm)
-			matchesNum += len(matches)
+			doMatches := term.MatchString(perm)
+			if doMatches {
+				matchesNum++
+			}
 		}
 
 		if matchesNum == 0 { // nothing to do here
 			continue
 		}
 
+		// get unique address of each db role,
+		// the IAM variable is a copy allocated everytime in the same address
+		// we need to get the source address
+		addri := &r.db.Roles()[i]
+
 		// if we match add/update this IAM in the Roles map
-		role, roleExists := roleMap[&IAM]
+		role, roleExists := roleMap[addri]
 		if !roleExists {
 			// add a new Role to the map
 			role = *models.NewRoleFromIAM(IAM)
-			roleMap[&IAM] = role
 		}
 
 		role.Matches += matchesNum
 		role.MatchedBy = append(role.MatchedBy, searchTerm)
+
+		// must reinsert as MatchedBy array is not copied with extraction...
+		// maybe this is one of those things you would not hit with rust?!
+		roleMap[addri] = role
 	}
 
-	return nil
+	return roleMap, nil
 }
