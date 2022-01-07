@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "sirv-cli": "^2.0.1",
-    "sveltestrap": "^5.6.3"
+    "sveltestrap": "^5.7.0"
   }
 }
