@@ -3,6 +3,7 @@ package data
 import (
 	mocks "dsdr/mocks/data"
 	"dsdr/models"
+	"sort"
 	"testing"
 )
 
@@ -49,19 +50,38 @@ func TestFindPermissionsByRegexArrayEmptyArray(t *testing.T) {
 func TestFindPermissionsByRegexArrayWithArrayFilledWithExistentValues(t *testing.T) {
 	input := []string{"compute", "network"}
 
-	pippo := *new(models.BasicIAMRole)
-	pippo.IncludedPermissions = []string{"computeUser", "networkUser"}
+	role1 := *new(models.BasicIAMRole)
+	role1.IncludedPermissions = []string{"computeUser", "networkUser"}
+	role2 := *new(models.BasicIAMRole)
+	role2.IncludedPermissions = []string{"computeUser"}
 	var testDB mocks.DB
+
 	testDB.On("Connect", "../roles").Return(nil)
 	testDB.On("Roles").Return([]models.BasicIAMRole{
 		*new(models.BasicIAMRole),
-		pippo,
+		role1,
+		role2,
 	})
 
 	repo := NewRoleRepository(&testDB)
 	roles, err := repo.FindPermissionsByRegexArray(input)
 
-	if len(roles) == 0 || err != nil {
-		t.Fatalf("find by permissions should return some results and no error if a well inited array is passed")
+	// that's where the previous impl. of the test failed: it should be exactly 2 match and no err...
+	if len(roles) != 2 || err != nil {
+		t.Fatalf("find by permissions should return exact number of results and no error if a well inited array is passed")
+	}
+
+	/* also check for contents of returned permissions */
+
+	target := "computeUser"
+
+	isRoleOk := func(role models.Role) bool {
+		sort.Strings(role.IncludedPermissions)
+		i := sort.SearchStrings(role.IncludedPermissions, target)
+		return (i < len(role1.IncludedPermissions) && role1.IncludedPermissions[i] == target)
+	}
+
+	if !isRoleOk(roles[0]) || !isRoleOk(roles[1]) {
+		t.Fatalf("find by permissions should return the expected permission array")
 	}
 }
