@@ -1,3 +1,7 @@
+/* doesn't work issue with nesting svelte imports here:
+https://github.com/testing-library/svelte-testing-library/issues/181
+*/
+
 /**
  * @jest-environment jsdom
  */
