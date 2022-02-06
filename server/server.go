@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// serves a search to the front end - mockup for now
-	r.GET("/search", func(c *gin.Context) {
+	r.GET("/api/v1/search", func(c *gin.Context) {
 		var sq SearchQuery
 		err := c.ShouldBindQuery(&sq)
 		if err != nil {
@@ -50,5 +50,5 @@ func main() {
 		c.JSON(http.StatusOK, roles)
 	})
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run(":8000") // listen and serve on 0.0.0.0:8080
 }
