@@ -36,7 +36,8 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: '../server/static/build/bundle.js'
+		file: '../server/static/build/bundle.js',
+		inlineDynamicImports: true //for svelte-spa-router dyn. import
 	},
 	plugins: [
 		svelte({
@@ -57,7 +58,8 @@ export default {
 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
 		resolve({
 			browser: true,
-			dedupe: ['svelte']
+			dedupe: ['svelte'],
+			moduleDirectories: ['node_modules','src']
 		}),
 		commonjs(),
 		typescript({
