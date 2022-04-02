@@ -113,3 +113,9 @@ server/src/static/build/bundle.js
 server/src/static/build/bundle.js.map
 server/coverage.txt
 app/src/firebase.config.ts
+app/.firebase/hosting.cHVibGlj.cache
+app/public/favicon.png
+app/public/global.css
+app/public/index.html
+app/src/config.ts
+app/src/main.ts
