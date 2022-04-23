@@ -20,11 +20,17 @@ func main() {
 	p := bluemonday.StrictPolicy()
 
 	// init the repo
-	var DB data.FileSystemDB
-	err := DB.Connect("roles")
+	var DB data.BqDB
+
+	err := DB.Connect("")
 	if err != nil {
 		panic("Unable to connect to roles repository. Aborting.")
 	}
+
+	defer DB.Client().Close()
+
+	// just a debug line here...
+	DB.Query("SELECT * FROM pippo")
 
 	// serves a search to the front end - mockup for now
 	r.GET("/api/v1/search", func(c *gin.Context) {
