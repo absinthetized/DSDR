@@ -119,3 +119,5 @@ app/public/global.css
 app/public/index.html
 app/src/config.ts
 app/src/main.ts
+server/dsdr-e95e9-80f004cc43c0.json
+server/bigquery-auth-key.json

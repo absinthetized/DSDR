@@ -19,12 +19,6 @@ func main() {
 	r := gin.Default()
 	p := bluemonday.StrictPolicy()
 
-	// serve static resources from svelte
-	r.Static("/svelte", "./static/build")
-	r.StaticFile("/favicon.png", "./static/favicon.png")
-	r.StaticFile("/global.css", "./static/global.css")
-	r.StaticFile("/", "./static/index.html")
-
 	// init the repo
 	var DB data.FileSystemDB
 	err := DB.Connect("roles")
