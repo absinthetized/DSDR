@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"dsdr/models"
-	"fmt"
 	"log"
 
 	"cloud.google.com/go/bigquery"
@@ -12,12 +11,8 @@ import (
 
 const bqLocation = "us-central1"
 
-// aliasing for readibility
-type bqRow = []bigquery.Value
-
 // the roles repository mimiking an actual data layer (eg. a DB)
 type BqDB struct {
-	roles  []models.BasicIAMRole
 	client *bigquery.Client
 }
 
@@ -41,8 +36,10 @@ func (b *BqDB) Close() {
 	b.client.Close()
 }
 
+// this must be removed
 func (b *BqDB) Roles() []models.BasicIAMRole {
-	return b.roles
+	var patch_for_refactor []models.BasicIAMRole
+	return patch_for_refactor
 }
 
 func (b *BqDB) Client() *bigquery.Client {
@@ -50,7 +47,7 @@ func (b *BqDB) Client() *bigquery.Client {
 }
 
 // Query returns an array of bigquery values and an error
-func (b *BqDB) Query(queryString string) ([]bqRow, error) {
+func Query[T any](b *BqDB, queryString string) ([]T, error) {
 	q := b.client.Query(queryString)
 	q.Location = bqLocation
 
@@ -84,15 +81,13 @@ func (b *BqDB) Query(queryString string) ([]bqRow, error) {
 		return nil, err
 	}
 
-	var rows []bqRow
+	var rows []T
 	for {
-		var row bqRow
+		var row T
 
 		err := it.Next(&row)
 
 		if err == iterator.Done {
-			rows = append(rows, row)
-			fmt.Println(row)
 			break
 		}
 
@@ -102,7 +97,6 @@ func (b *BqDB) Query(queryString string) ([]bqRow, error) {
 		}
 
 		rows = append(rows, row)
-		fmt.Println(row)
 	}
 
 	return rows, nil
