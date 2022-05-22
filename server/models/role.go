@@ -3,7 +3,7 @@ package models
 import "strings"
 
 // basic type to be derived/extended
-type abstractIAMRole struct {
+type AbstractIAMRole struct {
 	Description string `json:"description"`
 	Name        string `json:"name"`
 	Stage       string `json:"stage"`
@@ -13,7 +13,7 @@ type abstractIAMRole struct {
 
 // BqIAMRole maps the info of GCP IAM roles stored in big query
 type BqIAMRole struct {
-	abstractIAMRole
+	AbstractIAMRole
 
 	Included_permissions string // bq doesn't store arrays in a field
 }
@@ -22,14 +22,14 @@ type BqIAMRole struct {
 // it is expected to be a method in place able to map the BqIAMRole Included_permissions string
 // of comma separeted roles into an array of strings as the one in BasicIAMRole
 type BasicIAMRole struct {
-	abstractIAMRole
+	AbstractIAMRole
 
 	IncludedPermissions []string `json:"includedPermissions"`
 }
 
 func NewIAMfromBq(bq BqIAMRole) *BasicIAMRole {
 	role := new(BasicIAMRole)
-	role.abstractIAMRole = bq.abstractIAMRole
+	role.AbstractIAMRole = bq.AbstractIAMRole
 	role.IncludedPermissions = append(role.IncludedPermissions, strings.Split(bq.Included_permissions, ",")...)
 	return role
 }
