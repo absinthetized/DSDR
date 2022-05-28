@@ -11,6 +11,8 @@ import (
 
 const bqLocation = "us-central1"
 
+type BqQuery string
+
 // the roles repository mimiking an actual data layer (eg. a DB)
 type BqDB struct {
 	client *bigquery.Client
@@ -47,8 +49,8 @@ func (b *BqDB) Client() *bigquery.Client {
 }
 
 // Query returns an array of bigquery values and an error
-func Query[T any](b *BqDB, queryString string) ([]T, error) {
-	q := b.client.Query(queryString)
+func Query[T any](b *BqDB, queryString BqQuery) ([]T, error) {
+	q := b.client.Query(string(queryString))
 	q.Location = bqLocation
 
 	ctx := context.Background()
