@@ -32,9 +32,13 @@ func NewDataMapper[T any](db *BqDB, tablename string) *BqDatamapper[T] {
 	return dm
 }
 
-func (dm *BqDatamapper[T]) FindAll() ([]T, error) {
-	query := "SELECT " + dm.cFilter + " FROM " + dm.table
+func (dm *BqDatamapper[T]) FindAll() BqQuery {
+	query := BqQuery("SELECT " + dm.cFilter + " FROM " + dm.table)
 	log.Println(query)
+	return query
+}
+
+func (dm *BqDatamapper[T]) Run(query BqQuery) ([]T, error) {
 	return Query[T](dm.db, query)
 }
 
