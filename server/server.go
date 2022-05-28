@@ -1,7 +1,9 @@
 package main
 
 import (
+	"dsdr/models"
 	"dsdr/services"
+	"log"
 	"net/http"
 
 	"dsdr/data"
@@ -27,10 +29,25 @@ func main() {
 		panic("Unable to connect to roles repository. Aborting.")
 	}
 
-	defer DB.Client().Close()
+	defer DB.Close()
 
 	// just a debug line here...
-	DB.Query("SELECT * FROM pippo")
+	IamRoleMapper := data.NewDataMapper[models.BqIAMRole](&DB, "roles_dataset.roles_table")
+
+	simpleQuery := IamRoleMapper.FindAll()
+	iams, err1 := IamRoleMapper.Run(simpleQuery)
+	if err1 != nil {
+		log.Println("datamapper FindAll failed:", err)
+
+	} else {
+		log.Println("----------------")
+		log.Println("-- DM result ---")
+		log.Println("----------------")
+		for _, iam := range iams {
+			log.Println(iam)
+		}
+		log.Println("----------------")
+	}
 
 	// serves a search to the front end - mockup for now
 	r.GET("/api/v1/search", func(c *gin.Context) {
