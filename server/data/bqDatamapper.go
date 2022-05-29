@@ -15,7 +15,10 @@ type BqDatamapper[T any] struct {
 	cFilter    string // cFilter is the column filter, basically (for now) the list of columns in a sql table
 }
 
-type BqQuery string
+type BqQuery struct {
+	query      string
+	fieldNames []string
+}
 
 func NewDataMapper[T any](db *BqDB, tablename string) *BqDatamapper[T] {
 	dm := new(BqDatamapper[T])
@@ -23,7 +26,7 @@ func NewDataMapper[T any](db *BqDB, tablename string) *BqDatamapper[T] {
 	dm.table = tablename
 
 	dm.fieldNames = reflector(*new(T))
-	for i := 0; i < len(fieldNames); i++ {
+	for i := 0; i < len(dm.fieldNames); i++ {
 		dm.fieldNames[i] = strings.ToLower(dm.fieldNames[i])
 	}
 
@@ -38,7 +41,7 @@ func NewDataMapper[T any](db *BqDB, tablename string) *BqDatamapper[T] {
 }
 
 func (dm *BqDatamapper[T]) FindAll() BqQuery {
-	query := BqQuery("SELECT " + dm.cFilter + " FROM " + dm.table)
+	query := BqQuery{"SELECT " + dm.cFilter + " FROM " + dm.table, dm.fieldNames}
 	log.Println(query)
 	return query
 }
@@ -57,17 +60,17 @@ func (bq BqQuery) Where(filter models.BqIAMRole) BqQuery {
 func (bq *BqQuery) reflectFilter(filter models.BqIAMRole) map[string]string {
 	var filterFields = make(map[string]string)
 
-	t := reflect.TypeOf(filter)
-	v := reflect.ValueOf(filter).FieldByName() //<-- ciò è figo!!!
-	for i := 0; i < v.NumField(); i++ {
-		if t.Field(i).Type.Kind() == reflect.Int {
-			filterFields[t.Field(i).Name] = strconv.Itoa(v.Field(i).Interface().(int))
+	for _, fieldName := range bq.fieldNames {
+		v := reflect.ValueOf(filter).FieldByName(fieldName)
 
-		} else if t.Field(i).Type.Kind() == reflect.String {
-			filterFields[t.Field(i).Name] = v.Field(i).Interface().(string)
+		if v.Kind() == reflect.Int {
+			filterFields[fieldName] = strconv.Itoa(v.Interface().(int))
+
+		} else if v.Kind() == reflect.String {
+			filterFields[fieldName] = v.Interface().(string)
 
 		} else {
-			log.Println("filtering for type", t.Field(i).Type.Kind(), "still missing sorry!")
+			log.Println("filtering for type", v.Kind(), "still missing sorry!")
 		}
 	}
 
