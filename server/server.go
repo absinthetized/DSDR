@@ -34,7 +34,9 @@ func main() {
 	// just a debug line here...
 	IamRoleMapper := data.NewDataMapper[models.BqIAMRole](&DB, "roles_dataset.roles_table")
 
-	simpleQuery := IamRoleMapper.FindAll()
+	filter := new(models.BqIAMRole)
+	filter.Name = "matteo"
+	simpleQuery := IamRoleMapper.FindAll().Where(*filter)
 	iams, err1 := IamRoleMapper.Run(simpleQuery)
 	if err1 != nil {
 		log.Println("datamapper FindAll failed:", err)
