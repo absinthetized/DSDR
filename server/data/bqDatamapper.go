@@ -26,13 +26,10 @@ func NewDataMapper[T any](db *BqDB, tablename string) *BqDatamapper[T] {
 	dm.table = tablename
 
 	dm.fieldNames = reflector(*new(T))
-	for i := 0; i < len(dm.fieldNames); i++ {
-		dm.fieldNames[i] = strings.ToLower(dm.fieldNames[i])
-	}
 
 	n := len(dm.fieldNames) - 1
 	for i := 0; i < n; i++ {
-		dm.cFilter = dm.cFilter + dm.fieldNames[i] + ","
+		dm.cFilter = dm.cFilter + strings.ToLower(dm.fieldNames[i]) + ","
 	}
 
 	dm.cFilter = dm.cFilter + dm.fieldNames[n] // no trailing comma
@@ -61,7 +58,7 @@ func (bq *BqQuery) reflectFilter(filter models.BqIAMRole) map[string]string {
 	var filterFields = make(map[string]string)
 
 	for _, fieldName := range bq.fieldNames {
-		v := reflect.ValueOf(filter).FieldByName(fieldName)
+		v := reflect.ValueOf(&filter).Elem().FieldByName(fieldName)
 
 		if v.Kind() == reflect.Int {
 			filterFields[fieldName] = strconv.Itoa(v.Interface().(int))
