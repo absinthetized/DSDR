@@ -28,7 +28,7 @@ jobs:
     #   run: echo "$FIREBASE_CONFIG" > ./app/src/firebase.config.ts
 
     - name: Build
-      run: cd ./app && npm install -g npm@8.3 && npm install && npm run build
+      run: cd ./app && npm install -g npm@8.12 && npm install && npm run build
 
     - name: Test
-      run: cd ./app && npm install -g npm@8.3 && npm install && npm run test
+      run: cd ./app && npm install -g npm@8.12 && npm install && npm run test
