@@ -2,19 +2,13 @@ package models
 
 import "strings"
 
-// basic type to be derived/extended
-type AbstractIAMRole struct {
-	Description string `json:"description"`
-	Name        string `json:"name"`
-	Stage       string `json:"stage"`
-	Title       string `json:"title"`
-	Id          int    `json:"id"`
-}
-
 // BqIAMRole maps the info of GCP IAM roles stored in big query
 type BqIAMRole struct {
-	AbstractIAMRole
-
+	Description          string
+	Name                 string
+	Stage                string
+	Title                string
+	Id                   int
 	Included_permissions string // bq doesn't store arrays in a field
 }
 
@@ -22,14 +16,21 @@ type BqIAMRole struct {
 // it is expected to be a method in place able to map the BqIAMRole Included_permissions string
 // of comma separeted roles into an array of strings as the one in BasicIAMRole
 type BasicIAMRole struct {
-	AbstractIAMRole
-
+	Description         string   `json:"description"`
+	Name                string   `json:"name"`
+	Stage               string   `json:"stage"`
+	Title               string   `json:"title"`
+	Id                  int      `json:"id"`
 	IncludedPermissions []string `json:"includedPermissions"`
 }
 
 func NewIAMfromBq(bq BqIAMRole) *BasicIAMRole {
 	role := new(BasicIAMRole)
-	role.AbstractIAMRole = bq.AbstractIAMRole
+	role.Description = bq.Description
+	role.Id = bq.Id
+	role.Name = bq.Name
+	role.Stage = bq.Stage
+	role.Title = bq.Title
 	role.IncludedPermissions = append(role.IncludedPermissions, strings.Split(bq.Included_permissions, ",")...)
 	return role
 }
