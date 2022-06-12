@@ -47,24 +47,33 @@ func (dm *BqDatamapper[T]) Run(query BqQuery) ([]T, error) {
 	return Query[T](dm.db, query)
 }
 
-func (bq BqQuery) Where(filter models.BqIAMRole) BqQuery {
+func (bq BqQuery) Where(filter models.BqIAMRoleFilter) BqQuery {
 	filtersMap := bq.reflectFilter(filter)
 	log.Println(filtersMap)
 
 	return bq
 }
 
-func (bq *BqQuery) reflectFilter(filter models.BqIAMRole) map[string]string {
+func (bq *BqQuery) reflectFilter(filter models.BqIAMRoleFilter) map[string]string {
 	var filterFields = make(map[string]string)
 
 	for _, fieldName := range bq.fieldNames {
 		v := reflect.ValueOf(&filter).Elem().FieldByName(fieldName)
 
-		if v.Kind() == reflect.Int {
-			filterFields[fieldName] = strconv.Itoa(v.Interface().(int))
+		if v.Kind() == reflect.Pointer {
+			e := v.Elem()
+			if !e.IsValid() {
+				continue
 
-		} else if v.Kind() == reflect.String {
-			filterFields[fieldName] = v.Interface().(string)
+			} else if e.Kind() == reflect.Int {
+				filterFields[fieldName] = strconv.Itoa(e.Interface().(int))
+
+			} else if e.Kind() == reflect.String {
+				filterFields[fieldName] = e.Interface().(string)
+
+			} else {
+				log.Println("unable to dereference pointer of type", e.Kind(), "sorry!")
+			}
 
 		} else {
 			log.Println("filtering for type", v.Kind(), "still missing sorry!")
