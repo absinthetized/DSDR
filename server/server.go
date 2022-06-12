@@ -34,8 +34,9 @@ func main() {
 	// just a debug line here...
 	IamRoleMapper := data.NewDataMapper[models.BqIAMRole](&DB, "roles_dataset.roles_table")
 
-	filter := new(models.BqIAMRole)
-	filter.Name = "matteo"
+	name := "matteo"
+	filter := new(models.BqIAMRoleFilter)
+	filter.Name = &name
 	simpleQuery := IamRoleMapper.FindAll().Where(*filter)
 	iams, err1 := IamRoleMapper.Run(simpleQuery)
 	if err1 != nil {
