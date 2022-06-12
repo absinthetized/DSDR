@@ -37,7 +37,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: '../server/static/build/bundle.js',
+		file: './public/build/bundle.js',
 		inlineDynamicImports: true //for svelte-spa-router dyn. import
 	},
 	plugins: [
@@ -64,7 +64,7 @@ export default {
 		}),
 		commonjs(),
 		typescript({
-			sourceMap: !production,
+			sourceMap: true, //!production,
 			inlineSources: !production
 		}),
 
