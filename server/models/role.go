@@ -12,6 +12,16 @@ type BqIAMRole struct {
 	Included_permissions string // bq doesn't store arrays in a field
 }
 
+// BqIAMRoleFilter act as a filter (where caluse) of GCP IAM roles stored in big query
+type BqIAMRoleFilter struct {
+	Description          *string
+	Name                 *string
+	Stage                *string
+	Title                *string
+	Id                   *int
+	Included_permissions *string // bq doesn't store arrays in a field
+}
+
 // BasicIAMRole models the json info of GCP IAM roles
 // it is expected to be a method in place able to map the BqIAMRole Included_permissions string
 // of comma separeted roles into an array of strings as the one in BasicIAMRole
