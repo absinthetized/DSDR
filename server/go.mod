@@ -5,7 +5,7 @@ go 1.18
 require (
 	cloud.google.com/go/bigquery v1.31.0
 	github.com/gin-gonic/gin v1.7.7
-	github.com/microcosm-cc/bluemonday v1.0.16
+	github.com/microcosm-cc/bluemonday v1.0.18
 	github.com/stretchr/testify v1.7.1
 	google.golang.org/api v0.74.0
 )
