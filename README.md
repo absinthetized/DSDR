@@ -6,7 +6,7 @@ this tool is developed in typescript with svelte and sveltstrap on the front end
 ## Pre req
 
 * npm with node js (v.12.22 is used here)
-* go 1.17.x+
+* go 1.18.x+
 * [air](https://github.com/cosmtrek/air) (hotreload for gin)
 
 ## Setup
@@ -42,7 +42,7 @@ The serving is performed by the go server and not the develp svelte server (see 
 cd server && air
 ```
 
-This will run the gin server with hot reload (even when you change the svelte front end)
+This will run the gin server with hot reload
 The server is accessible on localhost:8080
 
 ## Preseeding
@@ -59,7 +59,8 @@ this will take a bit of time depending on your machine and network latency. stil
 ## TODO
 
 - add auth to avoid unwanted acceses
-- attach a proper DB (firebase)
+- attach a proper DB (bigquery as I want to build a repository pattern in go)
 - add rest api to populate the DB from an "admin" page
 - build a container for the server to make it deployable in prod
+- frontend must be deployed in a bucket
 
