@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/microcosm-cc/bluemonday v1.0.19
 	github.com/stretchr/testify v1.8.0
-	google.golang.org/api v0.92.0
+	google.golang.org/api v0.91.0
 )
 
 require (
